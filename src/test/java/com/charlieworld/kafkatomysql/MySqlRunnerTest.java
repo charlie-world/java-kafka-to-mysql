@@ -48,20 +48,12 @@ public class MySqlRunnerTest extends TestCase {
     public void mySqlRunnerTest() {
         MySqlRunner mySqlRunner = mock(MySqlRunner.class);
         KafkaData mockedKafkaData = mock(KafkaData.class);
-        Connection connection = mock(Connection.class);
-        Statement statement = mock(Statement.class);
 
         mySqlRunner.setHost(host);
         mySqlRunner.setPort(port);
 
-        try {
-            when(DriverManager.getConnection(mySqlRunner.getDbUrl(), this.userName, this.passWord)).thenReturn(connection);
-            when(connection.createStatement()).thenReturn(statement);
-            when(statement.executeUpdate(mySqlRunner.getInsertQuery(mockedKafkaData))).thenReturn(1);
+        when(mySqlRunner.insertOp(mockedKafkaData)).thenReturn(1);
 
-            mySqlRunner.insertOp(mockedKafkaData);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
+        assertEquals(mySqlRunner.insertOp(mockedKafkaData), 1);
     }
 }

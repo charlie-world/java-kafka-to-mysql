@@ -13,14 +13,14 @@ import java.sql.Statement;
  */
 public class MySqlRunner {
 
-    static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    String userName = null;
-    String passWord = null;
-    String host = null;
-    String tableName = null;
-    int port = 3306;
+    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
+    private String userName = null;
+    private String passWord = null;
+    private String host = null;
+    private String tableName = null;
+    private int port = 3306;
 
-    Connection connection = null;
+    private Connection connection = null;
 
     public MySqlRunner(String userName, String password, String host, int port, String tableName) {
         this.userName = userName;
@@ -59,19 +59,17 @@ public class MySqlRunner {
         this.port = port;
     }
 
-    public void insertOp(KafkaData kafkaData) {
+    public int insertOp(KafkaData kafkaData) {
+        int returnValue = -1;
         try {
             Class.forName(JDBC_DRIVER);
             connection = DriverManager.getConnection(this.getDbUrl(), this.userName, this.passWord);
             Statement statement = connection.createStatement();
-            statement.executeUpdate(getInsertQuery(kafkaData));
+            returnValue = statement.executeUpdate(getInsertQuery(kafkaData));
             connection.close();
-        } catch (SQLException se1) {
-            se1.printStackTrace();
-        } catch (ClassNotFoundException ce1) {
-            ce1.printStackTrace();
         } finally {
             System.out.println("db disconnnected...");
+            return returnValue;
         }
     }
 }
