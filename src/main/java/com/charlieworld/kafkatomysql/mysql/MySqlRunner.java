@@ -4,6 +4,7 @@ import com.charlieworld.kafkatomysql.dto.KafkaData;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
@@ -18,9 +19,6 @@ public class MySqlRunner {
     private String host;
     private String tableName;
     private int port;
-
-    private Connection connection = null;
-    private Statement statement = null;
 
     public MySqlRunner(String userName, String password, String host, int port, String tableName) {
         this.userName = userName;
@@ -59,44 +57,29 @@ public class MySqlRunner {
         this.port = port;
     }
 
-    public Connection getConnection() {
-        Connection conn = null;
-        try {
-            conn = DriverManager.getConnection(this.getDbUrl(), this.userName, this.passWord);
-        } finally {
-            this.connection = conn;
-            return connection;
-        }
-    }
-
-    public Statement getStatement() {
-        Statement stat = null;
-        try {
-            stat = this.connection.createStatement();
-        } finally {
-            this.statement = stat;
-            return statement;
-        }
-    }
-
-    public int insertKafkaData(String sql) {
+    public int insertKafkaData(Statement statement, String sql) {
         int returnValue = -1;
         try {
-            returnValue = this.statement.executeUpdate(sql);
-        } finally {
-            return returnValue;
+            returnValue = statement.executeUpdate(sql);
+        } catch (SQLException se) {
+            se.getCause();
         }
+        return returnValue;
     }
 
     public int insertOp(KafkaData kafkaData) {
         int returnValue = -1;
         try {
             Class.forName(JDBC_DRIVER);
-            returnValue = insertKafkaData(getInsertQuery(kafkaData));
+            Connection connection = DriverManager.getConnection(getDbUrl(), userName, passWord);
+            Statement statement = connection.createStatement();
+            returnValue = insertKafkaData(statement, getInsertQuery(kafkaData));
             connection.close();
-        } finally {
-            System.out.println("db disconnnected...");
-            return returnValue;
+        } catch (ClassNotFoundException ce) {
+            ce.getCause();
+        } catch (SQLException se) {
+            se.getCause();
         }
+        return returnValue;
     }
 }

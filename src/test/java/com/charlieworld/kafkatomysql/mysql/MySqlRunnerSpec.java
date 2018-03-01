@@ -46,15 +46,7 @@ public class MySqlRunnerSpec extends TestCase {
     public void mySqlRunnerTest() {
         MySqlRunner mySqlRunner = mock(MySqlRunner.class);
         KafkaData kafkaData = mock(KafkaData.class);
-        Connection connection = mock(Connection.class);
-        Statement statement = mock(Statement.class);
 
-        String sql = "SQL";
-
-        when(mySqlRunner.getInsertQuery(kafkaData)).thenReturn(sql);
-        when(mySqlRunner.getConnection()).thenReturn(connection);
-        when(mySqlRunner.getStatement()).thenReturn(statement);
-        when(mySqlRunner.insertKafkaData(sql)).thenReturn(1);
         when(mySqlRunner.insertOp(kafkaData)).thenReturn(1);
 
         assertEquals(1, mySqlRunner.insertOp(kafkaData));
