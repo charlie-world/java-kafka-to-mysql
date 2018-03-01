@@ -8,9 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Writer Charlie Lee
@@ -22,6 +20,8 @@ public class KafkaSubscriberSpec extends TestCase {
     List<String> topics = null;
     String bootstrapServers = null;
     String groupId = null;
+    KafkaSubscriber kafkaSubscriber = null;
+    KafkaData kafkaData = null;
 
     long eventId = 1;
     String timestamp = "2018-01-01";
@@ -33,11 +33,12 @@ public class KafkaSubscriberSpec extends TestCase {
         topics = Arrays.asList("test-topic");
         bootstrapServers = "localhost:9035";
         groupId = "test-group-id";
+        kafkaSubscriber = new KafkaSubscriber(topics, bootstrapServers, groupId);
+        kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
     }
 
     @Test
     public void KafkaSubscriberInitTest() {
-        KafkaSubscriber kafkaSubscriber = new KafkaSubscriber(topics, bootstrapServers, groupId);
         Properties expectedProps = new Properties();
         expectedProps.put("bootstrap.servers", bootstrapServers);
         expectedProps.put("group.id", groupId);
@@ -52,9 +53,6 @@ public class KafkaSubscriberSpec extends TestCase {
 
     @Test
     public void KafkaSubscriberJsonParseTest() {
-        KafkaSubscriber kafkaSubscriber = new KafkaSubscriber(topics, bootstrapServers, groupId);
-        KafkaData kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
-
         String fullBody = "{event_id: 1, event_timestamp: '2018-01-01', service_code: 'SERVICE_CODE', event_context: 'EVENT_CONTEXT'}";
         String bodyWithNull = "{event_id: 1, event_timestamp: '2018-01-01', service_code: 'SERVICE_CODE'}";
 
@@ -70,5 +68,14 @@ public class KafkaSubscriberSpec extends TestCase {
         assertEquals(kafkaData.getEventTimestamp(), expectedWithNull.getEventTimestamp());
         assertEquals(kafkaData.getServiceCode(), expectedWithNull.getServiceCode());
         assertEquals(null, expectedWithNull.getEventContext());
+    }
+
+    @Test
+    public void KafkaSubscriberEnqueueTest() {
+        Queue<KafkaData> queue = new LinkedList<KafkaData>();
+        kafkaSubscriber.setQueue(queue);
+        kafkaSubscriber.enqueueKafkaData(kafkaData);
+
+        assertEquals(kafkaData, kafkaSubscriber.dequeueKafkaData());
     }
 }

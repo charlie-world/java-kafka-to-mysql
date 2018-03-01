@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.List;
 import java.util.Properties;
+import java.util.Queue;
 
 public class KafkaSubscriber implements Runnable {
 
@@ -18,7 +19,8 @@ public class KafkaSubscriber implements Runnable {
     private String bootstrapServers;
     private String groupId;
     private Properties props;
-    private Consumer<String, String> kafkaConsumer = null;
+    private Consumer<String, String> kafkaConsumer;
+    private Queue<KafkaData> queue = null;
 
     public KafkaSubscriber(List<String> topics, String bootstrapServers, String groupId) {
         if (topics.isEmpty()) {
@@ -34,12 +36,12 @@ public class KafkaSubscriber implements Runnable {
             props.put("group.id", groupId);
             props.put("key.deserializer", StringDeserializer.class.getName());
             props.put("value.deserializer", StringDeserializer.class.getName());
+            this.kafkaConsumer = new KafkaConsumer<String, String>(props);
         }
     }
 
-    public void createConsumer() {
-        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<String, String>(props);
-        this.kafkaConsumer = kafkaConsumer;
+    public void setQueue(Queue<KafkaData> queue) {
+        this.queue = queue;
     }
 
     public List<String> getTopics() {
@@ -76,9 +78,18 @@ public class KafkaSubscriber implements Runnable {
             }
 
             kafkaData = new KafkaData(eventId, eventTimestamp, serviceCode, eventContext);
-        } finally {
-            return kafkaData;
+        } catch (JSONException je) {
+            je.getCause();
         }
+        return kafkaData;
+    }
+
+    public boolean enqueueKafkaData(KafkaData kafkaData) {
+        return this.queue.add(kafkaData);
+    }
+
+    public KafkaData dequeueKafkaData() {
+        return this.queue.remove();
     }
 
     public void run() {
