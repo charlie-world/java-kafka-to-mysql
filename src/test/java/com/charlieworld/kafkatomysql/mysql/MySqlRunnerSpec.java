@@ -21,11 +21,11 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnit4.class)
 public class MySqlRunnerSpec extends TestCase {
 
-    String userName = null;
-    String passWord = null;
-    String host = null;
-    int port = 3306;
-    String tableName = null;
+    String userName;
+    String passWord;
+    String host;
+    int port;
+    String tableName;
 
     @Before
     public void before() {
@@ -33,6 +33,7 @@ public class MySqlRunnerSpec extends TestCase {
         passWord = "password";
         host = "localhost";
         tableName = "TEST_TABLE";
+        port = 3306;
     }
 
     @Test
