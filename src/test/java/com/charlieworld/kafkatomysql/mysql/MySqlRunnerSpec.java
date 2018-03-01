@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql;
+package com.charlieworld.kafkatomysql.mysql;
 
 import com.charlieworld.kafkatomysql.dto.KafkaData;
 import junit.framework.TestCase;
@@ -6,11 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -21,7 +16,7 @@ import static org.mockito.Mockito.when;
  * Created at 2018. 2. 27.
  */
 @RunWith(JUnit4.class)
-public class MySqlRunnerTest extends TestCase {
+public class MySqlRunnerSpec extends TestCase {
 
     String userName = null;
     String passWord = null;

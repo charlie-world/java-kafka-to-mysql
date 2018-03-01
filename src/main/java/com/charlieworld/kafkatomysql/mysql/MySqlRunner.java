@@ -1,10 +1,9 @@
-package com.charlieworld.kafkatomysql;
+package com.charlieworld.kafkatomysql.mysql;
 
 import com.charlieworld.kafkatomysql.dto.KafkaData;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
