@@ -9,9 +9,10 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
-import java.util.Queue;
 
 public class KafkaSubscriber implements Runnable {
 
@@ -20,9 +21,9 @@ public class KafkaSubscriber implements Runnable {
     private String groupId;
     private Properties props;
     private Consumer<String, String> kafkaConsumer;
-    private Queue<KafkaData> queue = null;
+    private HashMap<String, KafkaData> hashMap = null;
 
-    public KafkaSubscriber(List<String> topics, String bootstrapServers, String groupId) {
+    public KafkaSubscriber(List<String> topics, String bootstrapServers, String groupId, HashMap<String, KafkaData> hashMap) {
         if (topics.isEmpty()) {
             throw new IllegalArgumentException("topic list must be not empty list");
         } else if (bootstrapServers == null) {
@@ -31,6 +32,7 @@ public class KafkaSubscriber implements Runnable {
             this.topics = topics;
             this.bootstrapServers = bootstrapServers;
             this.groupId = groupId;
+            this.hashMap = hashMap;
             props = new Properties();
             props.put("bootstrap.servers", bootstrapServers);
             props.put("group.id", groupId);
@@ -38,10 +40,6 @@ public class KafkaSubscriber implements Runnable {
             props.put("value.deserializer", StringDeserializer.class.getName());
             this.kafkaConsumer = new KafkaConsumer<String, String>(props);
         }
-    }
-
-    public void setQueue(Queue<KafkaData> queue) {
-        this.queue = queue;
     }
 
     public List<String> getTopics() {
@@ -84,12 +82,12 @@ public class KafkaSubscriber implements Runnable {
         return kafkaData;
     }
 
-    public boolean enqueueKafkaData(KafkaData kafkaData) {
-        return this.queue.add(kafkaData);
+    public KafkaData putKafkaDataToHashMap(KafkaData kafkaData) {
+        return this.hashMap.put(String.valueOf(kafkaData.getEventId()), kafkaData);
     }
 
-    public KafkaData dequeueKafkaData() {
-        return this.queue.remove();
+    public HashMap<String, KafkaData> getHashMap() {
+        return this.hashMap;
     }
 
     public void run() {
@@ -98,8 +96,7 @@ public class KafkaSubscriber implements Runnable {
             while(!Thread.interrupted()) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
                 for (ConsumerRecord<String, String> record : records)
-                    // parsing kafka body value and send to queue
-                    System.out.println(record.value());
+                    putKafkaDataToHashMap(parseKafkaBody(record.value()));
 
                 kafkaConsumer.commitAsync();
             }

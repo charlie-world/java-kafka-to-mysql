@@ -27,13 +27,19 @@ public class KafkaSubscriberSpec extends TestCase {
     String timestamp = "2018-01-01";
     String eventContext = "EVENT_CONTEXT";
     String serviceCode = "SERVICE_CODE";
+    HashMap<String, KafkaData> hashMap = new HashMap<String, KafkaData>();
 
     @Before
     public void before() {
         topics = Arrays.asList("test-topic");
         bootstrapServers = "localhost:9035";
         groupId = "test-group-id";
-        kafkaSubscriber = new KafkaSubscriber(topics, bootstrapServers, groupId);
+        kafkaSubscriber = new KafkaSubscriberBuilder()
+                                .topics(topics)
+                                .bootstrapServers(bootstrapServers)
+                                .groupId(groupId)
+                                .hashMap(hashMap)
+                                .build();
         kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
     }
 
@@ -72,10 +78,7 @@ public class KafkaSubscriberSpec extends TestCase {
 
     @Test
     public void KafkaSubscriberEnqueueTest() {
-        Queue<KafkaData> queue = new LinkedList<KafkaData>();
-        kafkaSubscriber.setQueue(queue);
-        kafkaSubscriber.enqueueKafkaData(kafkaData);
-
-        assertEquals(kafkaData, kafkaSubscriber.dequeueKafkaData());
+        kafkaSubscriber.putKafkaDataToHashMap(kafkaData);
+        assertEquals(kafkaData, kafkaSubscriber.getHashMap().get(String.valueOf(kafkaData.getEventId())));
     }
 }
