@@ -11,7 +11,7 @@ import java.sql.Statement;
  * Writer Charlie Lee
  * Created at 2018. 2. 27.
  */
-public class MySqlRunner {
+public class MySqlRunner implements Runnable {
 
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private String userName;
@@ -19,6 +19,7 @@ public class MySqlRunner {
     private String host;
     private String tableName;
     private int port;
+    private KafkaData kafkaData = null;
 
     public MySqlRunner(String userName, String password, String host, int port, String tableName) {
         this.userName = userName;
@@ -28,15 +29,24 @@ public class MySqlRunner {
         this.tableName = tableName;
     }
 
-    public String getInsertQuery(KafkaData kafkaData) {
-        String sql = "insert into" + this.tableName + String.format(
-                "values(%s, %s, %s, %s);",
-                Long.toString(kafkaData.getEventId()),
-                kafkaData.getEventTimestamp(),
-                kafkaData.getServiceCode(),
-                kafkaData.getEventContext()
-        );
+    public String getInsertQuery() {
+        String sql = null;
+        try {
+            sql = "insert into " + this.tableName + " " + String.format(
+                    "values(%s, %s, %s, %s);",
+                    Long.toString(this.kafkaData.getEventId()),
+                    this.kafkaData.getEventTimestamp(),
+                    this.kafkaData.getServiceCode(),
+                    this.kafkaData.getEventContext()
+            );
+        } catch (NullPointerException ne) {
+            ne.getCause();
+        }
         return sql;
+    }
+
+    public void putKafkaData(KafkaData kafkaData) {
+        this.kafkaData = kafkaData;
     }
 
     public String getDbUrl() {
@@ -67,19 +77,17 @@ public class MySqlRunner {
         return returnValue;
     }
 
-    public int insertOp(KafkaData kafkaData) {
-        int returnValue = -1;
+    public void run() {
         try {
             Class.forName(JDBC_DRIVER);
             Connection connection = DriverManager.getConnection(getDbUrl(), userName, passWord);
             Statement statement = connection.createStatement();
-            returnValue = insertKafkaData(statement, getInsertQuery(kafkaData));
+            insertKafkaData(statement, getInsertQuery());
             connection.close();
         } catch (ClassNotFoundException ce) {
             ce.getCause();
         } catch (SQLException se) {
             se.getCause();
         }
-        return returnValue;
     }
 }

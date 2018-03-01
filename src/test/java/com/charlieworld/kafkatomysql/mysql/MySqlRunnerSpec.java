@@ -7,13 +7,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.sql.Connection;
-import java.sql.Statement;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 /**
  * Writer Charlie Lee
  * Created at 2018. 2. 27.
@@ -26,6 +19,13 @@ public class MySqlRunnerSpec extends TestCase {
     String host;
     int port;
     String tableName;
+    MySqlRunner mySqlRunner;
+    KafkaData kafkaData;
+
+    long eventId = 1;
+    String timestamp = "2018-01-01";
+    String eventContext = "EVENT_CONTEXT";
+    String serviceCode = "SERVICE_CODE";
 
     @Before
     public void before() {
@@ -34,22 +34,21 @@ public class MySqlRunnerSpec extends TestCase {
         host = "localhost";
         tableName = "TEST_TABLE";
         port = 3306;
+        mySqlRunner = new MySqlRunner(this.userName, this.passWord, this.host, this.port, this.tableName);
+        kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
     }
 
     @Test
     public void mySqlRunnerInitTest() {
-        MySqlRunner mySqlRunner = new MySqlRunner(this.userName, this.passWord, this.host, this.port, this.tableName);
         assertEquals(mySqlRunner.getHost(), host);
         assertEquals(mySqlRunner.getPort(), port);
     }
 
     @Test
-    public void mySqlRunnerTest() {
-        MySqlRunner mySqlRunner = mock(MySqlRunner.class);
-        KafkaData kafkaData = mock(KafkaData.class);
+    public void mySqlRunnerPutKafkaDataTest() {
+        mySqlRunner.putKafkaData(kafkaData);
+        String expectedSql = "insert into TEST_TABLE values(1, 2018-01-01, SERVICE_CODE, EVENT_CONTEXT);";
 
-        when(mySqlRunner.insertOp(kafkaData)).thenReturn(1);
-
-        assertEquals(1, mySqlRunner.insertOp(kafkaData));
+        assertEquals(expectedSql, mySqlRunner.getInsertQuery());
     }
 }
