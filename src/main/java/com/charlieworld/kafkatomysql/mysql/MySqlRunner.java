@@ -13,13 +13,14 @@ import java.sql.Statement;
 public class MySqlRunner {
 
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private String userName = null;
-    private String passWord = null;
-    private String host = null;
-    private String tableName = null;
-    private int port = 3306;
+    private String userName;
+    private String passWord;
+    private String host;
+    private String tableName;
+    private int port;
 
     private Connection connection = null;
+    private Statement statement = null;
 
     public MySqlRunner(String userName, String password, String host, int port, String tableName) {
         this.userName = userName;
@@ -58,13 +59,40 @@ public class MySqlRunner {
         this.port = port;
     }
 
+    public Connection getConnection() {
+        Connection conn = null;
+        try {
+            conn = DriverManager.getConnection(this.getDbUrl(), this.userName, this.passWord);
+        } finally {
+            this.connection = conn;
+            return connection;
+        }
+    }
+
+    public Statement getStatement() {
+        Statement stat = null;
+        try {
+            stat = this.connection.createStatement();
+        } finally {
+            this.statement = stat;
+            return statement;
+        }
+    }
+
+    public int insertKafkaData(String sql) {
+        int returnValue = -1;
+        try {
+            returnValue = this.statement.executeUpdate(sql);
+        } finally {
+            return returnValue;
+        }
+    }
+
     public int insertOp(KafkaData kafkaData) {
         int returnValue = -1;
         try {
             Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(this.getDbUrl(), this.userName, this.passWord);
-            Statement statement = connection.createStatement();
-            returnValue = statement.executeUpdate(getInsertQuery(kafkaData));
+            returnValue = insertKafkaData(getInsertQuery(kafkaData));
             connection.close();
         } finally {
             System.out.println("db disconnnected...");

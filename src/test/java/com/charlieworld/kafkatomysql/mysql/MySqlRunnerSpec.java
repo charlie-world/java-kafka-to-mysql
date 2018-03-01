@@ -7,6 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.sql.Connection;
+import java.sql.Statement;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,13 +45,18 @@ public class MySqlRunnerSpec extends TestCase {
     @Test
     public void mySqlRunnerTest() {
         MySqlRunner mySqlRunner = mock(MySqlRunner.class);
-        KafkaData mockedKafkaData = mock(KafkaData.class);
+        KafkaData kafkaData = mock(KafkaData.class);
+        Connection connection = mock(Connection.class);
+        Statement statement = mock(Statement.class);
 
-        mySqlRunner.setHost(host);
-        mySqlRunner.setPort(port);
+        String sql = "SQL";
 
-        when(mySqlRunner.insertOp(mockedKafkaData)).thenReturn(1);
+        when(mySqlRunner.getInsertQuery(kafkaData)).thenReturn(sql);
+        when(mySqlRunner.getConnection()).thenReturn(connection);
+        when(mySqlRunner.getStatement()).thenReturn(statement);
+        when(mySqlRunner.insertKafkaData(sql)).thenReturn(1);
+        when(mySqlRunner.insertOp(kafkaData)).thenReturn(1);
 
-        assertEquals(mySqlRunner.insertOp(mockedKafkaData), 1);
+        assertEquals(1, mySqlRunner.insertOp(kafkaData));
     }
 }
