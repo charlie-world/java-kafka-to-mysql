@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql;
+package com.charlieworld.kafkatomysql.mysql;
 
 import com.charlieworld.kafkatomysql.dto.KafkaData;
 import junit.framework.TestCase;
@@ -8,8 +8,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.sql.Statement;
 
 import static org.mockito.Mockito.mock;
@@ -21,13 +19,13 @@ import static org.mockito.Mockito.when;
  * Created at 2018. 2. 27.
  */
 @RunWith(JUnit4.class)
-public class MySqlRunnerTest extends TestCase {
+public class MySqlRunnerSpec extends TestCase {
 
-    String userName = null;
-    String passWord = null;
-    String host = null;
-    int port = 3306;
-    String tableName = null;
+    String userName;
+    String passWord;
+    String host;
+    int port;
+    String tableName;
 
     @Before
     public void before() {
@@ -35,6 +33,7 @@ public class MySqlRunnerTest extends TestCase {
         passWord = "password";
         host = "localhost";
         tableName = "TEST_TABLE";
+        port = 3306;
     }
 
     @Test
@@ -47,13 +46,10 @@ public class MySqlRunnerTest extends TestCase {
     @Test
     public void mySqlRunnerTest() {
         MySqlRunner mySqlRunner = mock(MySqlRunner.class);
-        KafkaData mockedKafkaData = mock(KafkaData.class);
+        KafkaData kafkaData = mock(KafkaData.class);
 
-        mySqlRunner.setHost(host);
-        mySqlRunner.setPort(port);
+        when(mySqlRunner.insertOp(kafkaData)).thenReturn(1);
 
-        when(mySqlRunner.insertOp(mockedKafkaData)).thenReturn(1);
-
-        assertEquals(mySqlRunner.insertOp(mockedKafkaData), 1);
+        assertEquals(1, mySqlRunner.insertOp(kafkaData));
     }
 }

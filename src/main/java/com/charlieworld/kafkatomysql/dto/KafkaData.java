@@ -8,10 +8,10 @@ import java.util.NoSuchElementException;
  */
 public class KafkaData {
 
-    private long eventId = -1;
-    private String eventTimestamp = null;
-    private String serviceCode = null;
-    private String eventContext = null;
+    private long eventId;
+    private String eventTimestamp;
+    private String serviceCode;
+    private String eventContext;
 
     public KafkaData(long eventId, String eventTimestamp, String serviceCode, String eventContext) {
         if (eventId > 0 && eventTimestamp != null) {

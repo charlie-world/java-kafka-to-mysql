@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql;
+package com.charlieworld.kafkatomysql.mysql;
 
 import com.charlieworld.kafkatomysql.dto.KafkaData;
 
@@ -14,13 +14,11 @@ import java.sql.Statement;
 public class MySqlRunner {
 
     private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private String userName = null;
-    private String passWord = null;
-    private String host = null;
-    private String tableName = null;
-    private int port = 3306;
-
-    private Connection connection = null;
+    private String userName;
+    private String passWord;
+    private String host;
+    private String tableName;
+    private int port;
 
     public MySqlRunner(String userName, String password, String host, int port, String tableName) {
         this.userName = userName;
@@ -59,17 +57,29 @@ public class MySqlRunner {
         this.port = port;
     }
 
+    public int insertKafkaData(Statement statement, String sql) {
+        int returnValue = -1;
+        try {
+            returnValue = statement.executeUpdate(sql);
+        } catch (SQLException se) {
+            se.getCause();
+        }
+        return returnValue;
+    }
+
     public int insertOp(KafkaData kafkaData) {
         int returnValue = -1;
         try {
             Class.forName(JDBC_DRIVER);
-            connection = DriverManager.getConnection(this.getDbUrl(), this.userName, this.passWord);
+            Connection connection = DriverManager.getConnection(getDbUrl(), userName, passWord);
             Statement statement = connection.createStatement();
-            returnValue = statement.executeUpdate(getInsertQuery(kafkaData));
+            returnValue = insertKafkaData(statement, getInsertQuery(kafkaData));
             connection.close();
-        } finally {
-            System.out.println("db disconnnected...");
-            return returnValue;
+        } catch (ClassNotFoundException ce) {
+            ce.getCause();
+        } catch (SQLException se) {
+            se.getCause();
         }
+        return returnValue;
     }
 }
