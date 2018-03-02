@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.locks.Lock;
 
 public class KafkaSubscriber implements Runnable {
 
@@ -21,7 +22,7 @@ public class KafkaSubscriber implements Runnable {
     private String groupId;
     private Properties props;
     private Consumer<String, String> kafkaConsumer;
-    private HashMap<String, KafkaData> hashMap = null;
+    private HashMap<String, KafkaData> hashMap;
 
     public KafkaSubscriber(List<String> topics, String bootstrapServers, String groupId, HashMap<String, KafkaData> hashMap) {
         if (topics.isEmpty()) {
@@ -90,9 +91,15 @@ public class KafkaSubscriber implements Runnable {
         return this.hashMap;
     }
 
+    public void setHashMap(Lock mutex, HashMap<String, KafkaData> hashMap) {
+        mutex.lock();
+        this.hashMap = hashMap;
+        mutex.unlock();
+    }
+
     public void run() {
         try {
-            kafkaConsumer.subscribe(this.topics);
+            kafkaConsumer.subscribe(topics);
             while(!Thread.interrupted()) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
                 for (ConsumerRecord<String, String> record : records)
@@ -105,7 +112,7 @@ public class KafkaSubscriber implements Runnable {
         }
     }
 
-    public void shutdown() {
+    public void wakeup() {
         kafkaConsumer.wakeup();
     }
 }

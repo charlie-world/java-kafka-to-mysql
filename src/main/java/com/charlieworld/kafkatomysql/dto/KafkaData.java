@@ -1,5 +1,8 @@
 package com.charlieworld.kafkatomysql.dto;
 
+import com.charlieworld.kafkatomysql.mysql.MySqlConnector;
+import com.charlieworld.kafkatomysql.mysql.MySqlRunner;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -44,5 +47,9 @@ public class KafkaData {
 
     public String getEventContext() {
         return this.eventContext;
+    }
+
+    public MySqlRunner mapToMySqlRunner(String tableName, MySqlConnector mySqlConnector) {
+        return new MySqlRunner(tableName, this, mySqlConnector);
     }
 }

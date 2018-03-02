@@ -11,7 +11,7 @@ import java.sql.Statement;
  * Writer Charlie Lee
  * Created at 2018. 2. 27.
  */
-public class MySqlRunner implements Runnable {
+public class MySqlRunner {
 
     private String tableName;
     private KafkaData kafkaData = null;
@@ -47,9 +47,15 @@ public class MySqlRunner implements Runnable {
         return mySqlConnector.executeUpdate(sql);
     }
 
-    public void run() {
-        Statement statement = mySqlConnector.getStatement();
-        insertKafkaData(getInsertQuery());
-        mySqlConnector.close();
+    public Runnable run() {
+        return new Runnable() {
+            public void run() {
+                try {
+                    insertKafkaData(getInsertQuery());
+                } finally {
+                    mySqlConnector.close();
+                }
+            }
+        };
     }
 }

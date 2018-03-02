@@ -67,7 +67,7 @@ public class MySqlConnector {
     public int executeUpdate(String sql) {
         int returnValue = -1;
         try {
-            returnValue = this.statement.executeUpdate(sql);
+            returnValue = getStatement().executeUpdate(sql);
         } catch (SQLException se) {
             se.getCause();
         }
