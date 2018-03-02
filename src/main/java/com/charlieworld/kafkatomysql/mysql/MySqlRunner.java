@@ -13,20 +13,14 @@ import java.sql.Statement;
  */
 public class MySqlRunner implements Runnable {
 
-    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private String userName;
-    private String passWord;
-    private String host;
     private String tableName;
-    private int port;
     private KafkaData kafkaData = null;
+    private MySqlConnector mySqlConnector = null;
 
-    public MySqlRunner(String userName, String password, String host, int port, String tableName) {
-        this.userName = userName;
-        this.passWord = password;
-        this.host = host;
-        this.port = port;
+    public MySqlRunner(String tableName, KafkaData kafkaData, MySqlConnector mySqlConnector) {
         this.tableName = tableName;
+        this.kafkaData = kafkaData;
+        this.mySqlConnector = mySqlConnector;
     }
 
     public String getInsertQuery() {
@@ -49,45 +43,13 @@ public class MySqlRunner implements Runnable {
         this.kafkaData = kafkaData;
     }
 
-    public String getDbUrl() {
-        return String.format("jdbc:mysql://%s:%d", host, port);
-    }
-
-    public String getHost() { return this.host; }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public int insertKafkaData(Statement statement, String sql) {
-        int returnValue = -1;
-        try {
-            returnValue = statement.executeUpdate(sql);
-        } catch (SQLException se) {
-            se.getCause();
-        }
-        return returnValue;
+    public int insertKafkaData(String sql) {
+        return mySqlConnector.executeUpdate(sql);
     }
 
     public void run() {
-        try {
-            Class.forName(JDBC_DRIVER);
-            Connection connection = DriverManager.getConnection(getDbUrl(), userName, passWord);
-            Statement statement = connection.createStatement();
-            insertKafkaData(statement, getInsertQuery());
-            connection.close();
-        } catch (ClassNotFoundException ce) {
-            ce.getCause();
-        } catch (SQLException se) {
-            se.getCause();
-        }
+        Statement statement = mySqlConnector.getStatement();
+        insertKafkaData(getInsertQuery());
+        mySqlConnector.close();
     }
 }
