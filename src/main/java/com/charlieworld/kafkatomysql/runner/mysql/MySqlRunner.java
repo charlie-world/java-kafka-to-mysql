@@ -26,10 +26,10 @@ public class MySqlRunner implements Runnable {
         String sql = null;
         try {
             sql = String.format(
-                    "insert into %s.%s values(%s, %s, %s, %s);",
+                    "insert into %s.%s values(%d, '%s', '%s', '%s');",
                     this.database,
                     this.tableName,
-                    Long.toString(this.kafkaData.getEventId()),
+                    this.kafkaData.getEventId(),
                     this.kafkaData.getEventTimestamp(),
                     this.kafkaData.getServiceCode(),
                     this.kafkaData.getEventContext()

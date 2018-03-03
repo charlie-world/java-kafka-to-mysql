@@ -87,6 +87,7 @@ public class KafkaConsumeRunner implements Runnable {
                 eventContext = jsonObject.getString("event_context");
             } catch (JSONException je) {
                 // nothing
+                je.printStackTrace();
             }
 
             kafkaData = new KafkaData(eventId, eventTimestamp, serviceCode, eventContext);
@@ -108,9 +109,9 @@ public class KafkaConsumeRunner implements Runnable {
             kafkaConsumer.subscribe(topics);
             while(!Thread.interrupted()) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
-                for (ConsumerRecord<String, String> record : records)
+                for (ConsumerRecord<String, String> record : records) {
                     putKafkaDataToHashMap(parseKafkaBody(record.value()));
-
+                }
                 kafkaConsumer.commitAsync();
             }
         } catch (InterruptException ie) {

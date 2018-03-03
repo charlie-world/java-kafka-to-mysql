@@ -28,9 +28,11 @@ public class KafkaProducerRunner extends Thread {
 
     public String createMsg(int msgId) {
         return String.format(
-                "{event_id: %d, event_timestamp: '%s', service_code: 'SERVICE_CODE', event_context: 'EVENT_CONTEXT'}",
+                "{event_id: %d, event_timestamp: '%s', service_code: '%s', event_context: '%s'}",
                 msgId,
-                new Date(System.currentTimeMillis()).toString()
+                new Date(System.currentTimeMillis()).toString(),
+                "SERVICE_CODE",
+                "EVENT_CONTEXT"
         );
     }
 
@@ -47,6 +49,7 @@ public class KafkaProducerRunner extends Thread {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
+            msgId += 1;
         }
     }
 }
