@@ -1,6 +1,6 @@
-package com.charlieworld.kafkatomysql.kafka;
+package com.charlieworld.kafkatomysql.runner.kafka;
 
-import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
 import junit.framework.TestCase;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
@@ -15,12 +15,12 @@ import java.util.*;
  * Created at 2018. 3. 1.
  */
 @RunWith(JUnit4.class)
-public class KafkaSubscriberSpec extends TestCase {
+public class KafkaConsumeRunnerSpec extends TestCase {
 
     List<String> topics = null;
     String bootstrapServers = null;
     String groupId = null;
-    KafkaSubscriber kafkaSubscriber = null;
+    KafkaConsumeRunner kafkaConsumeRunner = null;
     KafkaData kafkaData = null;
 
     long eventId = 1;
@@ -34,11 +34,10 @@ public class KafkaSubscriberSpec extends TestCase {
         topics = Arrays.asList("test-topic");
         bootstrapServers = "localhost:9035";
         groupId = "test-group-id";
-        kafkaSubscriber = new KafkaSubscriberBuilder()
+        kafkaConsumeRunner = new KafkaConsumeRunnerBuilder()
                                 .topics(topics)
                                 .bootstrapServers(bootstrapServers)
                                 .groupId(groupId)
-                                .hashMap(hashMap)
                                 .build();
         kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
     }
@@ -51,10 +50,10 @@ public class KafkaSubscriberSpec extends TestCase {
         expectedProps.put("key.deserializer", StringDeserializer.class.getName());
         expectedProps.put("value.deserializer", StringDeserializer.class.getName());
 
-        assertEquals(kafkaSubscriber.getTopics(), topics);
-        assertEquals(kafkaSubscriber.getBootstrapServers(), bootstrapServers);
-        assertEquals(kafkaSubscriber.getGroupId(), groupId);
-        assertEquals(kafkaSubscriber.getProps(), expectedProps);
+        assertEquals(kafkaConsumeRunner.getTopics(), topics);
+        assertEquals(kafkaConsumeRunner.getBootstrapServers(), bootstrapServers);
+        assertEquals(kafkaConsumeRunner.getGroupId(), groupId);
+        assertEquals(kafkaConsumeRunner.getProps(), expectedProps);
     }
 
     @Test
@@ -62,8 +61,8 @@ public class KafkaSubscriberSpec extends TestCase {
         String fullBody = "{event_id: 1, event_timestamp: '2018-01-01', service_code: 'SERVICE_CODE', event_context: 'EVENT_CONTEXT'}";
         String bodyWithNull = "{event_id: 1, event_timestamp: '2018-01-01', service_code: 'SERVICE_CODE'}";
 
-        KafkaData expectedFull = kafkaSubscriber.parseKafkaBody(fullBody);
-        KafkaData expectedWithNull = kafkaSubscriber.parseKafkaBody(bodyWithNull);
+        KafkaData expectedFull = kafkaConsumeRunner.parseKafkaBody(fullBody);
+        KafkaData expectedWithNull = kafkaConsumeRunner.parseKafkaBody(bodyWithNull);
 
         assertEquals(kafkaData.getEventId(), expectedFull.getEventId());
         assertEquals(kafkaData.getEventTimestamp(), expectedFull.getEventTimestamp());
@@ -77,8 +76,13 @@ public class KafkaSubscriberSpec extends TestCase {
     }
 
     @Test
-    public void KafkaSubscriberEnqueueTest() {
-        kafkaSubscriber.putKafkaDataToHashMap(kafkaData);
-        assertEquals(kafkaData, kafkaSubscriber.getHashMap().get(String.valueOf(kafkaData.getEventId())));
+    public void KafkaSubscriberPutHashMapTest() {
+        KafkaData otherKafkaData = new KafkaData(eventId, timestamp, null, null);
+        kafkaConsumeRunner.putKafkaDataToHashMap(kafkaData);
+        assertEquals(kafkaData, kafkaConsumeRunner.getHashMap().get(String.valueOf(kafkaData.getEventId())));
+
+        // update based on event id
+        kafkaConsumeRunner.putKafkaDataToHashMap(otherKafkaData);
+        assertEquals(otherKafkaData, kafkaConsumeRunner.getHashMap().get(String.valueOf(kafkaData.getEventId())));
     }
 }

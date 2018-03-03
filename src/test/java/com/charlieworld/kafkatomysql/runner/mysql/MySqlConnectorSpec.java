@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql.mysql;
+package com.charlieworld.kafkatomysql.runner.mysql;
 
 import junit.framework.TestCase;
 import org.junit.Before;

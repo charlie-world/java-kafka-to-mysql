@@ -1,17 +1,12 @@
-package com.charlieworld.kafkatomysql.mysql;
+package com.charlieworld.kafkatomysql.runner.mysql;
 
-import com.charlieworld.kafkatomysql.dto.KafkaData;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
 
 /**
  * Writer Charlie Lee
  * Created at 2018. 2. 27.
  */
-public class MySqlRunner {
+public class MySqlRunner implements Runnable {
 
     private String tableName;
     private KafkaData kafkaData = null;
@@ -47,15 +42,11 @@ public class MySqlRunner {
         return mySqlConnector.executeUpdate(sql);
     }
 
-    public Runnable run() {
-        return new Runnable() {
-            public void run() {
-                try {
-                    insertKafkaData(getInsertQuery());
-                } finally {
-                    mySqlConnector.close();
-                }
-            }
-        };
+    public void run() {
+        try {
+            insertKafkaData(getInsertQuery());
+        } finally {
+            mySqlConnector.close();
+        }
     }
 }

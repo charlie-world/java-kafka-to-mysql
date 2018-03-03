@@ -1,6 +1,6 @@
-package com.charlieworld.kafkatomysql.mysql;
+package com.charlieworld.kafkatomysql.runner.mysql;
 
-import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;

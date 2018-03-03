@@ -1,7 +1,7 @@
-package com.charlieworld.kafkatomysql.dto;
+package com.charlieworld.kafkatomysql.dto.kafkadata;
 
-import com.charlieworld.kafkatomysql.mysql.MySqlConnector;
-import com.charlieworld.kafkatomysql.mysql.MySqlRunner;
+import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
+import com.charlieworld.kafkatomysql.runner.mysql.MySqlRunner;
 
 import java.util.NoSuchElementException;
 

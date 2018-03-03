@@ -8,7 +8,7 @@ import org.junit.runners.JUnit4;
 import java.util.Properties;
 
 @RunWith(JUnit4.class)
-public class SchedulerSpec extends TestCase {
+public class MainSchedulerSpec extends TestCase {
 
     Properties props = null;
 
