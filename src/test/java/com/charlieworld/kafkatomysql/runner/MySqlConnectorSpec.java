@@ -1,5 +1,6 @@
-package com.charlieworld.kafkatomysql.runner.mysql;
+package com.charlieworld.kafkatomysql.runner;
 
+import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
 import junit.framework.TestCase;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class MySqlConnectorSpec extends TestCase {
 
     @Test
     public void MySqlConnectorHandleErrorTest() {
-        IllegalArgumentException illegalArgumentException = new IllegalArgumentException("user name, password, host must be not null value");
+        IllegalArgumentException illegalArgumentException = new IllegalArgumentException("user name, password, host must not be null value");
         try {
             new MySqlConnector(null, passWord, host, port);
         } catch (IllegalArgumentException ie) {

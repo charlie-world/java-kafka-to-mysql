@@ -28,9 +28,9 @@ public class KafkaConsumeRunner implements Runnable {
 
     public KafkaConsumeRunner(List<String> topics, String bootstrapServers, String groupId, Lock mutex) {
         if (topics.isEmpty()) {
-            throw new IllegalArgumentException("topic list must be not empty list");
+            throw new IllegalArgumentException("topic list must not be empty list");
         } else if (bootstrapServers == null) {
-            throw new IllegalArgumentException("bootstrap servers must be not null value");
+            throw new IllegalArgumentException("bootstrap servers must not be null value");
         } else {
             this.topics = topics;
             this.bootstrapServers = bootstrapServers;
@@ -61,10 +61,11 @@ public class KafkaConsumeRunner implements Runnable {
         return this.props;
     }
 
-    public void setHashMap(HashMap<String, KafkaData> hashMap) {
+    public HashMap<String, KafkaData> setHashMap(HashMap<String, KafkaData> hashMap) {
         mutex.lock();
         this.hashMap = hashMap;
         mutex.unlock();
+        return this.hashMap;
     }
 
     public HashMap<String, KafkaData> getHashMap() { return this.hashMap; }

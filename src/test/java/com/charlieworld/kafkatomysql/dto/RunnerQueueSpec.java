@@ -12,7 +12,6 @@ import org.junit.runners.JUnit4;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Queue;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,7 +19,6 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnit4.class)
 public class RunnerQueueSpec extends TestCase {
 
-    Queue<MySqlRunner> MY_SQL_RUNNER_QUEUE = null;
     String tableName = null;
     MySqlConnector mySqlConnector = null;
 
@@ -31,7 +29,6 @@ public class RunnerQueueSpec extends TestCase {
 
     @Before
     public void before() {
-        this.MY_SQL_RUNNER_QUEUE = new LinkedList<MySqlRunner>();
         this.tableName = "TEST_TABLE";
         this.mySqlConnector = new MySqlConnector(username, password, host, port);
     }
@@ -46,7 +43,7 @@ public class RunnerQueueSpec extends TestCase {
         /*
         *  init RunnerQueue and check isEmpty method
         * */
-        RunnerQueue runnerQueue = new RunnerQueue(MY_SQL_RUNNER_QUEUE, tableName, mySqlConnector);
+        RunnerQueue runnerQueue = new RunnerQueue(tableName, mySqlConnector);
         assertEquals(true, runnerQueue.isEmpty());
 
         /*

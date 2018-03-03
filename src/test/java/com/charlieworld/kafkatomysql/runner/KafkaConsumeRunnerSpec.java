@@ -1,6 +1,8 @@
-package com.charlieworld.kafkatomysql.runner.kafka;
+package com.charlieworld.kafkatomysql.runner;
 
 import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
+import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunner;
+import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunnerBuilder;
 import junit.framework.TestCase;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;

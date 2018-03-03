@@ -63,6 +63,6 @@ public class IntervalTimeRunnerBuilder {
     }
 
     public IntervalTimeRunner build() {
-        return new IntervalTimeRunner(this.interval, this.runnerQueue, this.mutex, this.hashMap, this.kafkaConsumeRunner);
+        return new IntervalTimeRunner(this.interval, this.runnerQueue, this.mutex, this.kafkaConsumeRunner);
     }
 }

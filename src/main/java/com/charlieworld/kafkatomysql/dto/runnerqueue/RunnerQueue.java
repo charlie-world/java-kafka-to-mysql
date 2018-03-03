@@ -5,19 +5,19 @@ import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
 import com.charlieworld.kafkatomysql.runner.mysql.MySqlRunner;
 
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class RunnerQueue {
 
-    private Queue<MySqlRunner> MY_SQL_RUNNER_QUEUE = null;
+    private Queue<MySqlRunner> MY_SQL_RUNNER_QUEUE = new LinkedList<MySqlRunner>();
     private String tableName = null;
     private MySqlConnector mySqlConnector = null;
 
-    public RunnerQueue(Queue<MySqlRunner> queue, String tableName, MySqlConnector mySqlConnector) {
-        if (queue == null || tableName == null || mySqlConnector == null) {
+    public RunnerQueue(String tableName, MySqlConnector mySqlConnector) {
+        if (tableName == null || mySqlConnector == null) {
             throw new IllegalArgumentException("MySql runner queue, table name or MySql connector must not be null");
         } else {
-            this.MY_SQL_RUNNER_QUEUE = queue;
             this.tableName = tableName;
             this.mySqlConnector = mySqlConnector;
         }

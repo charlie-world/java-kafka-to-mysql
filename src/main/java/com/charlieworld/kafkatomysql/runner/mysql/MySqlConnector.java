@@ -22,7 +22,7 @@ public class MySqlConnector {
 
     public MySqlConnector(String userName, String passWord, String host, int port) {
         if (userName == null || passWord == null || host == null) {
-            throw new IllegalArgumentException("user name, password, host must be not null value");
+            throw new IllegalArgumentException("user name, password, host must not be null value");
         } else {
             this.userName = userName;
             this.passWord = passWord;
@@ -39,7 +39,7 @@ public class MySqlConnector {
 
     public void setHost(String host) {
         if (host == null) {
-            throw new IllegalArgumentException("host value must be not null value");
+            throw new IllegalArgumentException("host value must not be null value");
         } else {
             this.host = host;
         }
