@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql.dto;
+package com.charlieworld.kafkatomysql.dto.kafkadata;
 
 /**
  * Writer Charlie Lee

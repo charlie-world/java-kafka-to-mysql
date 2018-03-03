@@ -1,6 +1,6 @@
-package com.charlieworld.kafkatomysql.kafka;
+package com.charlieworld.kafkatomysql.runner.kafka;
 
-import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -13,26 +13,29 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.locks.Lock;
 
-public class KafkaSubscriber implements Runnable {
+public class KafkaConsumeRunner implements Runnable {
 
     private List<String> topics;
     private String bootstrapServers;
     private String groupId;
     private Properties props;
     private Consumer<String, String> kafkaConsumer;
-    private HashMap<String, KafkaData> hashMap = null;
+    private HashMap<String, KafkaData> hashMap = new HashMap<String, KafkaData>();
 
-    public KafkaSubscriber(List<String> topics, String bootstrapServers, String groupId, HashMap<String, KafkaData> hashMap) {
+    private Lock mutex = null;
+
+    public KafkaConsumeRunner(List<String> topics, String bootstrapServers, String groupId, Lock mutex) {
         if (topics.isEmpty()) {
-            throw new IllegalArgumentException("topic list must be not empty list");
+            throw new IllegalArgumentException("topic list must not be empty list");
         } else if (bootstrapServers == null) {
-            throw new IllegalArgumentException("bootstrap servers must be not null value");
+            throw new IllegalArgumentException("bootstrap servers must not be null value");
         } else {
             this.topics = topics;
             this.bootstrapServers = bootstrapServers;
             this.groupId = groupId;
-            this.hashMap = hashMap;
+            this.mutex = mutex;
             props = new Properties();
             props.put("bootstrap.servers", bootstrapServers);
             props.put("group.id", groupId);
@@ -57,6 +60,15 @@ public class KafkaSubscriber implements Runnable {
     public Properties getProps() {
         return this.props;
     }
+
+    public HashMap<String, KafkaData> setHashMap(HashMap<String, KafkaData> hashMap) {
+        mutex.lock();
+        this.hashMap = hashMap;
+        mutex.unlock();
+        return this.hashMap;
+    }
+
+    public HashMap<String, KafkaData> getHashMap() { return this.hashMap; }
 
     public KafkaData parseKafkaBody(String body) {
         KafkaData kafkaData = null;
@@ -83,16 +95,15 @@ public class KafkaSubscriber implements Runnable {
     }
 
     public KafkaData putKafkaDataToHashMap(KafkaData kafkaData) {
-        return this.hashMap.put(String.valueOf(kafkaData.getEventId()), kafkaData);
-    }
-
-    public HashMap<String, KafkaData> getHashMap() {
-        return this.hashMap;
+        mutex.lock();
+        this.hashMap.put(String.valueOf(kafkaData.getEventId()), kafkaData);
+        mutex.unlock();
+        return kafkaData;
     }
 
     public void run() {
         try {
-            kafkaConsumer.subscribe(this.topics);
+            kafkaConsumer.subscribe(topics);
             while(!Thread.interrupted()) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
                 for (ConsumerRecord<String, String> record : records)
@@ -105,7 +116,7 @@ public class KafkaSubscriber implements Runnable {
         }
     }
 
-    public void shutdown() {
+    public void wakeup() {
         kafkaConsumer.wakeup();
     }
 }
