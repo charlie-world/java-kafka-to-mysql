@@ -26,6 +26,7 @@ public class MySqlRunnerSpec extends TestCase {
     String host;
     int port;
     String tableName;
+    String database;
     MySqlRunner mySqlRunner;
     MySqlConnector mySqlConnector;
     KafkaData kafkaData;
@@ -41,6 +42,7 @@ public class MySqlRunnerSpec extends TestCase {
         passWord = "password";
         host = "localhost";
         tableName = "TEST_TABLE";
+        database = "TEST_DB";
         port = 3306;
         kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
     }
@@ -48,9 +50,9 @@ public class MySqlRunnerSpec extends TestCase {
     @Test
     public void mySqlRunnerPutKafkaDataTest() {
         mySqlConnector = new MySqlConnector(userName, passWord, host, port);
-        mySqlRunner = new MySqlRunner(tableName, kafkaData, mySqlConnector);
+        mySqlRunner = new MySqlRunner(tableName, database, kafkaData, mySqlConnector);
         mySqlRunner.putKafkaData(kafkaData);
-        String expectedSql = "insert into TEST_TABLE values(1, 2018-01-01, SERVICE_CODE, EVENT_CONTEXT);";
+        String expectedSql = "insert into TEST_DB.TEST_TABLE values(1, 2018-01-01, SERVICE_CODE, EVENT_CONTEXT);";
 
         assertEquals(expectedSql, mySqlRunner.getInsertQuery());
     }
@@ -58,7 +60,7 @@ public class MySqlRunnerSpec extends TestCase {
     @Test
     public void mySqlRunnerInsertTest() {
         mySqlConnector = mock(MySqlConnector.class);
-        mySqlRunner = new MySqlRunner(tableName, kafkaData, mySqlConnector);
+        mySqlRunner = new MySqlRunner(tableName, database, kafkaData, mySqlConnector);
         Statement statement = mock(Statement.class);
         String sql = mySqlRunner.getInsertQuery();
 

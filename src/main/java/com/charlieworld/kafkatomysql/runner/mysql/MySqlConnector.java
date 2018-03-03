@@ -57,9 +57,9 @@ public class MySqlConnector {
             connection = DriverManager.getConnection(this.getDbUrl(), userName, passWord);
             statement = connection.createStatement();
         } catch (ClassNotFoundException ce) {
-            ce.getCause();
+            ce.printStackTrace();
         } catch (SQLException se) {
-            se.getCause();
+            se.printStackTrace();
         }
         return statement;
     }
@@ -69,7 +69,7 @@ public class MySqlConnector {
         try {
             returnValue = getStatement().executeUpdate(sql);
         } catch (SQLException se) {
-            se.getCause();
+            se.printStackTrace();
         }
         return returnValue;
     }
@@ -78,7 +78,7 @@ public class MySqlConnector {
         try {
             connection.close();
         } catch (SQLException se) {
-            se.getCause();
+            se.printStackTrace();
         }
     }
 }

@@ -49,7 +49,7 @@ public class KafkaData {
         return this.eventContext;
     }
 
-    public MySqlRunner mapToMySqlRunner(String tableName, MySqlConnector mySqlConnector) {
-        return new MySqlRunner(tableName, this, mySqlConnector);
+    public MySqlRunner mapToMySqlRunner(String tableName, String database, MySqlConnector mySqlConnector) {
+        return new MySqlRunner(tableName, database,this, mySqlConnector);
     }
 }

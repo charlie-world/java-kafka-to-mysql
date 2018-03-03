@@ -2,6 +2,7 @@ package com.charlieworld.kafkatomysql.runner.managequeue;
 
 import com.charlieworld.kafkatomysql.runner.mysql.MySqlRunner;
 import com.charlieworld.kafkatomysql.dto.runnerqueue.RunnerQueue;
+import org.apache.kafka.common.errors.InterruptException;
 
 import java.util.concurrent.ExecutorService;
 
@@ -23,8 +24,12 @@ public class ManageQueueRunner implements Runnable {
 
     public void run() {
         while(!Thread.interrupted()) {
-            if (!runnerQueue.isEmpty()) {
-                runMySql(runnerQueue.dequeue());
+            try {
+                if (!runnerQueue.isEmpty()) {
+                    runMySql(runnerQueue.dequeue());
+                }
+            } catch (InterruptException ie) {
+                ie.printStackTrace();
             }
         }
     }
