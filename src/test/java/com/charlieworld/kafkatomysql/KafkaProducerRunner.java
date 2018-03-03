@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql.runner.kafka;
+package com.charlieworld.kafkatomysql;
 
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;

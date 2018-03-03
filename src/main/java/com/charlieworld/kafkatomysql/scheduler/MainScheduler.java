@@ -8,6 +8,8 @@ import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunnerBuilder;
 import com.charlieworld.kafkatomysql.runner.managequeue.ManageQueueRunner;
 import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -32,9 +34,10 @@ public class MainScheduler implements Scheduler {
     private static final int numOfThreadPool = Runtime.getRuntime().availableProcessors();
     private static final ExecutorService executorService = Executors.newFixedThreadPool(numOfThreadPool);
 
-    public MainScheduler() {
+    public MainScheduler(String PROPERTIES_PATH) {
         try {
-            InputStream input = ClassLoader.class.getResourceAsStream("/config.properties");
+            File file = new File(PROPERTIES_PATH);
+            InputStream input = new FileInputStream(file);
             Properties props = new Properties();
             props.load(input);
             this.mySqlConnector = initMySqlConnector(props);
@@ -50,6 +53,7 @@ public class MainScheduler implements Scheduler {
             input.close();
         } catch (IOException ie) {
             ie.printStackTrace();
+            System.exit(1);
         }
     }
 
