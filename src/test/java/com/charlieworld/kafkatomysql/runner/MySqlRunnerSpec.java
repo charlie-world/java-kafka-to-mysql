@@ -52,7 +52,7 @@ public class MySqlRunnerSpec extends TestCase {
         mySqlConnector = new MySqlConnector(userName, passWord, host, port);
         mySqlRunner = new MySqlRunner(tableName, database, kafkaData, mySqlConnector);
         mySqlRunner.putKafkaData(kafkaData);
-        String expectedSql = "insert into TEST_DB.TEST_TABLE values(1, 2018-01-01, SERVICE_CODE, EVENT_CONTEXT);";
+        String expectedSql = "insert into TEST_DB.TEST_TABLE values(1, '2018-01-01', 'SERVICE_CODE', 'EVENT_CONTEXT');";
 
         assertEquals(expectedSql, mySqlRunner.getInsertQuery());
     }
