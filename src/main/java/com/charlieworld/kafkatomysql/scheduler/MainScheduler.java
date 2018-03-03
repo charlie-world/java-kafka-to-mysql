@@ -8,6 +8,10 @@ import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunnerBuilder;
 import com.charlieworld.kafkatomysql.runner.managequeue.ManageQueueRunner;
 import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,6 +23,7 @@ public class MainScheduler implements Scheduler {
 
     private long interval = 10;
     private String tableName = null;
+    private String databse = null;
 
     private MySqlConnector mySqlConnector = null;
     private KafkaConsumeRunner kafkaConsumeRunner = null;
@@ -29,19 +34,31 @@ public class MainScheduler implements Scheduler {
     private static final int numOfThreadPool = Runtime.getRuntime().availableProcessors();
     private static final ExecutorService executorService = Executors.newFixedThreadPool(numOfThreadPool);
 
-    public MainScheduler(Properties props) {
-        this.mySqlConnector = initMySqlConnector(props);
-        this.kafkaConsumeRunner = initKafkaConsumeRunner(props);
-        this.tableName = props.getProperty("table_name");
-        this.runnerQueue = new RunnerQueue(
-                tableName,
-                mySqlConnector
-        );
-        this.intervalTimeRunner = initIntervalTimeRunner(props);
+    public MainScheduler(String PROPERTIES_PATH) {
+        try {
+            File file = new File(PROPERTIES_PATH);
+            InputStream input = new FileInputStream(file);
+            Properties props = new Properties();
+            props.load(input);
+            this.mySqlConnector = initMySqlConnector(props);
+            this.kafkaConsumeRunner = initKafkaConsumeRunner(props);
+            this.tableName = props.getProperty("table_name");
+            this.databse = props.getProperty("database");
+            this.runnerQueue = new RunnerQueue(
+                    tableName,
+                    databse,
+                    mySqlConnector
+            );
+            this.intervalTimeRunner = initIntervalTimeRunner(props);
+            input.close();
+        } catch (IOException ie) {
+            ie.printStackTrace();
+            System.exit(1);
+        }
     }
 
     private IntervalTimeRunner initIntervalTimeRunner(Properties props) {
-        long interval = Long.getLong(props.getProperty("interval_time"));
+        long interval = Long.valueOf(props.getProperty("interval_time"));
 
         return new IntervalTimeRunnerBuilder()
                 .interval(interval)
@@ -68,7 +85,7 @@ public class MainScheduler implements Scheduler {
         String username = props.getProperty("username");
         String password = props.getProperty("password");
         String host = props.getProperty("host");
-        int port = Integer.getInteger(props.getProperty("port"));
+        int port = Integer.valueOf(props.getProperty("port"));
         return new MySqlConnector(username, password, host, port);
     }
 
@@ -76,6 +93,7 @@ public class MainScheduler implements Scheduler {
         executorService.execute(kafkaConsumeRunner);
         executorService.execute(intervalTimeRunner);
         executorService.execute(new ManageQueueRunner(runnerQueue, executorService));
+        System.out.println("Start Main Scheduler...");
         return this;
     }
 

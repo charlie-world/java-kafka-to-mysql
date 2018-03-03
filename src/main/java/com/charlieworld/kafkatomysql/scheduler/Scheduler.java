@@ -2,11 +2,11 @@ package com.charlieworld.kafkatomysql.scheduler;
 
 public interface Scheduler {
 
-    public abstract Scheduler runMain();
+    public Scheduler runMain();
 
-    public abstract void shutdown();
+    public void shutdown();
 
-    public abstract void await();
+    public void await();
 
-    public abstract void await(long minutes);
+    public void await(long minutes);
 }

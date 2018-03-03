@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 public class RunnerQueueSpec extends TestCase {
 
     String tableName = null;
+    String database = null;
     MySqlConnector mySqlConnector = null;
 
     String username = "USER";
@@ -30,6 +31,7 @@ public class RunnerQueueSpec extends TestCase {
     @Before
     public void before() {
         this.tableName = "TEST_TABLE";
+        this.database = "TEST_DB";
         this.mySqlConnector = new MySqlConnector(username, password, host, port);
     }
 
@@ -38,12 +40,12 @@ public class RunnerQueueSpec extends TestCase {
         KafkaData kafkaData = mock(KafkaData.class);
         MySqlRunner mySqlRunner = mock(MySqlRunner.class);
 
-        when(kafkaData.mapToMySqlRunner(tableName, mySqlConnector)).thenReturn(mySqlRunner);
+        when(kafkaData.mapToMySqlRunner(tableName, database, mySqlConnector)).thenReturn(mySqlRunner);
 
         /*
         *  init RunnerQueue and check isEmpty method
         * */
-        RunnerQueue runnerQueue = new RunnerQueue(tableName, mySqlConnector);
+        RunnerQueue runnerQueue = new RunnerQueue(tableName, database, mySqlConnector);
         assertEquals(true, runnerQueue.isEmpty());
 
         /*
@@ -53,6 +55,6 @@ public class RunnerQueueSpec extends TestCase {
         collection.add(kafkaData);
         runnerQueue.enqueue(collection);
 
-        assertEquals(kafkaData.mapToMySqlRunner(tableName, mySqlConnector), runnerQueue.dequeue());
+        assertEquals(kafkaData.mapToMySqlRunner(tableName, database, mySqlConnector), runnerQueue.dequeue());
     }
 }

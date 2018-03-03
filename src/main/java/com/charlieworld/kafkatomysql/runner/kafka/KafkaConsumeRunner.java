@@ -5,11 +5,13 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InterruptedIOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
@@ -85,11 +87,12 @@ public class KafkaConsumeRunner implements Runnable {
                 eventContext = jsonObject.getString("event_context");
             } catch (JSONException je) {
                 // nothing
+                je.printStackTrace();
             }
 
             kafkaData = new KafkaData(eventId, eventTimestamp, serviceCode, eventContext);
         } catch (JSONException je) {
-            je.getCause();
+            je.printStackTrace();
         }
         return kafkaData;
     }
@@ -106,11 +109,13 @@ public class KafkaConsumeRunner implements Runnable {
             kafkaConsumer.subscribe(topics);
             while(!Thread.interrupted()) {
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
-                for (ConsumerRecord<String, String> record : records)
+                for (ConsumerRecord<String, String> record : records) {
                     putKafkaDataToHashMap(parseKafkaBody(record.value()));
-
+                }
                 kafkaConsumer.commitAsync();
             }
+        } catch (InterruptException ie) {
+            ie.printStackTrace();
         } finally {
             kafkaConsumer.close();
         }

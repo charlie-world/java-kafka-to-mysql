@@ -12,13 +12,15 @@ public class RunnerQueue {
 
     private Queue<MySqlRunner> MY_SQL_RUNNER_QUEUE = new LinkedList<MySqlRunner>();
     private String tableName = null;
+    private String database = null;
     private MySqlConnector mySqlConnector = null;
 
-    public RunnerQueue(String tableName, MySqlConnector mySqlConnector) {
+    public RunnerQueue(String tableName, String database, MySqlConnector mySqlConnector) {
         if (tableName == null || mySqlConnector == null) {
             throw new IllegalArgumentException("MySql runner queue, table name or MySql connector must not be null");
         } else {
             this.tableName = tableName;
+            this.database = database;
             this.mySqlConnector = mySqlConnector;
         }
     }
@@ -29,7 +31,7 @@ public class RunnerQueue {
 
     public void enqueue(Collection<KafkaData> collectionOfKafkaData) {
         for(KafkaData kafkaData: collectionOfKafkaData) {
-            MY_SQL_RUNNER_QUEUE.add(kafkaData.mapToMySqlRunner(tableName, mySqlConnector));
+            MY_SQL_RUNNER_QUEUE.add(kafkaData.mapToMySqlRunner(tableName, database, mySqlConnector));
         }
     }
 }
