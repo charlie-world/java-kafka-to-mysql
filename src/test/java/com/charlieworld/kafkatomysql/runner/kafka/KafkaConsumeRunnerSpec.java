@@ -9,6 +9,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Writer Charlie Lee
@@ -28,6 +30,7 @@ public class KafkaConsumeRunnerSpec extends TestCase {
     String eventContext = "EVENT_CONTEXT";
     String serviceCode = "SERVICE_CODE";
     HashMap<String, KafkaData> hashMap = new HashMap<String, KafkaData>();
+    Lock mutex = new ReentrantLock(true);
 
     @Before
     public void before() {
@@ -38,6 +41,7 @@ public class KafkaConsumeRunnerSpec extends TestCase {
                                 .topics(topics)
                                 .bootstrapServers(bootstrapServers)
                                 .groupId(groupId)
+                                .mutex(mutex)
                                 .build();
         kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
     }
