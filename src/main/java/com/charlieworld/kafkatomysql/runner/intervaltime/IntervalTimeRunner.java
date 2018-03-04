@@ -1,30 +1,31 @@
 package com.charlieworld.kafkatomysql.runner.intervaltime;
 
-import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
-import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunner;
-import com.charlieworld.kafkatomysql.dto.runnerqueue.RunnerQueue;
+import com.charlieworld.kafkatomysql.Runner;
+import com.charlieworld.kafkatomysql.consumer.ConsumerRunner;
+import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.RunnerQueue;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 
-public class IntervalTimeRunner implements Runnable {
+public class IntervalTimeRunner extends Runner {
 
     private long interval = 10;
-    private RunnerQueue runnerQueue = null;
+    private RunnerQueue mySqlRunnerQueue = null;
     private Lock mutex = null;
     private HashMap<String, KafkaData> hashMap = null;
-    private KafkaConsumeRunner kafkaConsumeRunner = null;
+    private ConsumerRunner kafkaConsumeRunner = null;
 
     public IntervalTimeRunner(long interval,
-                              RunnerQueue runnerQueue,
+                              RunnerQueue mySqlRunnerQueue,
                               Lock mutex,
-                              KafkaConsumeRunner kafkaConsumeRunner) {
-        if (runnerQueue == null || mutex == null || kafkaConsumeRunner == null) {
+                              ConsumerRunner kafkaConsumeRunner) {
+        if (mySqlRunnerQueue == null || mutex == null || kafkaConsumeRunner == null) {
             throw new IllegalArgumentException("Runner Queue, Mutex or KafkaConsumeRunner must not be null value");
         } else {
             this.interval = interval;
-            this.runnerQueue = runnerQueue;
+            this.mySqlRunnerQueue = mySqlRunnerQueue;
             this.mutex = mutex;
             this.hashMap = kafkaConsumeRunner.getHashMap();
             this.kafkaConsumeRunner = kafkaConsumeRunner;
@@ -55,7 +56,7 @@ public class IntervalTimeRunner implements Runnable {
             try {
                 Thread.sleep(interval * 60 * 1000);
                 Collection<KafkaData> collection = resetHashMap(new HashMap<String, KafkaData>());
-                runnerQueue.enqueue(collection);
+                mySqlRunnerQueue.enqueue(collection);
             } catch (InterruptedException ie) {
                 System.exit(1);
             }

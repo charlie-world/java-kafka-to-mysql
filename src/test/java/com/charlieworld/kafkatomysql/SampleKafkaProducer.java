@@ -7,13 +7,13 @@ import java.sql.Date;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-public class KafkaProducerRunner extends Thread {
+public class SampleKafkaProducer extends Thread {
 
     private Properties properties = new Properties();
     private KafkaProducer<Integer, String> kafkaProducer = null;
     private String topic = null;
 
-    public KafkaProducerRunner(String topic) {
+    public SampleKafkaProducer(String topic) {
         if (topic == null) {
             throw new IllegalArgumentException("topic must not be null value");
         } else {

@@ -1,23 +1,23 @@
-package com.charlieworld.kafkatomysql.runner.kafka;
+package com.charlieworld.kafkatomysql.consumer.kafkaconsumer;
 
-import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
+import com.charlieworld.kafkatomysql.consumer.ConsumerRunner;
+import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.kafkadata.EventData;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.errors.InterruptException;
 import org.apache.kafka.common.serialization.StringDeserializer;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InterruptedIOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 
-public class KafkaConsumeRunner implements Runnable {
+public class KafkaConsumeRunner extends ConsumerRunner {
 
     private List<String> topics;
     private String bootstrapServers;
@@ -72,8 +72,8 @@ public class KafkaConsumeRunner implements Runnable {
 
     public HashMap<String, KafkaData> getHashMap() { return this.hashMap; }
 
-    public KafkaData parseKafkaBody(String body) {
-        KafkaData kafkaData = null;
+    public EventData parseKafkaBody(String body) {
+        EventData eventData = null;
         try {
             JSONObject jsonObject = new JSONObject(body);
             long eventId = jsonObject.getLong("event_id");
@@ -90,18 +90,18 @@ public class KafkaConsumeRunner implements Runnable {
                 je.printStackTrace();
             }
 
-            kafkaData = new KafkaData(eventId, eventTimestamp, serviceCode, eventContext);
+            eventData = new EventData(eventId, eventTimestamp, serviceCode, eventContext);
         } catch (JSONException je) {
             je.printStackTrace();
         }
-        return kafkaData;
+        return eventData;
     }
 
-    public KafkaData putKafkaDataToHashMap(KafkaData kafkaData) {
+    public EventData putKafkaDataToHashMap(EventData eventData) {
         mutex.lock();
-        this.hashMap.put(String.valueOf(kafkaData.getEventId()), kafkaData);
+        this.hashMap.put(String.valueOf(eventData.getEventId()), eventData);
         mutex.unlock();
-        return kafkaData;
+        return eventData;
     }
 
     public void run() {

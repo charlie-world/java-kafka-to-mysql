@@ -1,8 +1,9 @@
 package com.charlieworld.kafkatomysql.dto;
 
-import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
-import com.charlieworld.kafkatomysql.dto.runnerqueue.RunnerQueue;
-import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
+import com.charlieworld.kafkatomysql.DbConnector;
+import com.charlieworld.kafkatomysql.dbconnector.MySqlConnector;
+import com.charlieworld.kafkatomysql.dto.kafkadata.EventData;
+import com.charlieworld.kafkatomysql.dto.runnerqueue.MySqlRunnerQueue;
 import com.charlieworld.kafkatomysql.runner.mysql.MySqlRunner;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -17,11 +18,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(JUnit4.class)
-public class RunnerQueueSpec extends TestCase {
+public class MySqlRunnerQueueSpec extends TestCase {
 
     String tableName = null;
     String database = null;
-    MySqlConnector mySqlConnector = null;
+    DbConnector mySqlConnector = null;
 
     String username = "USER";
     String password = "PASSWORD";
@@ -37,24 +38,24 @@ public class RunnerQueueSpec extends TestCase {
 
     @Test
     public void RunnerQueueTest() {
-        KafkaData kafkaData = mock(KafkaData.class);
+        EventData eventData = mock(EventData.class);
         MySqlRunner mySqlRunner = mock(MySqlRunner.class);
 
-        when(kafkaData.mapToMySqlRunner(tableName, database, mySqlConnector)).thenReturn(mySqlRunner);
+        when(eventData.mapToRunner(tableName, database, mySqlConnector)).thenReturn(mySqlRunner);
 
         /*
-        *  init RunnerQueue and check isEmpty method
+        *  init MySqlRunnerQueue and check isEmpty method
         * */
-        RunnerQueue runnerQueue = new RunnerQueue(tableName, database, mySqlConnector);
-        assertEquals(true, runnerQueue.isEmpty());
+        RunnerQueue mySqlRunnerQueue = new MySqlRunnerQueue(tableName, database, mySqlConnector);
+        assertEquals(true, mySqlRunnerQueue.isEmpty());
 
         /*
-         *  enqueue the KafkaData collection and check dequeue method
+         *  enqueue the EventData collection and check dequeue method
          * */
         Collection<KafkaData> collection = new LinkedList<KafkaData>();
-        collection.add(kafkaData);
-        runnerQueue.enqueue(collection);
+        collection.add(eventData);
+        mySqlRunnerQueue.enqueue(collection);
 
-        assertEquals(kafkaData.mapToMySqlRunner(tableName, database, mySqlConnector), runnerQueue.dequeue());
+        assertEquals(eventData.mapToRunner(tableName, database, mySqlConnector), mySqlRunnerQueue.dequeue());
     }
 }

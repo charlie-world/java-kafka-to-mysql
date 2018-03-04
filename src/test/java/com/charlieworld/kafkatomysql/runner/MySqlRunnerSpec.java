@@ -1,7 +1,8 @@
 package com.charlieworld.kafkatomysql.runner;
 
-import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
-import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
+import com.charlieworld.kafkatomysql.DbConnector;
+import com.charlieworld.kafkatomysql.dbconnector.MySqlConnector;
+import com.charlieworld.kafkatomysql.dto.kafkadata.EventData;
 import com.charlieworld.kafkatomysql.runner.mysql.MySqlRunner;
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -28,8 +29,8 @@ public class MySqlRunnerSpec extends TestCase {
     String tableName;
     String database;
     MySqlRunner mySqlRunner;
-    MySqlConnector mySqlConnector;
-    KafkaData kafkaData;
+    DbConnector mySqlConnector;
+    EventData eventData;
 
     long eventId = 1;
     String timestamp = "2018-01-01";
@@ -44,14 +45,14 @@ public class MySqlRunnerSpec extends TestCase {
         tableName = "TEST_TABLE";
         database = "TEST_DB";
         port = 3306;
-        kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
+        eventData = new EventData(eventId, timestamp, serviceCode, eventContext);
     }
 
     @Test
     public void mySqlRunnerPutKafkaDataTest() {
         mySqlConnector = new MySqlConnector(userName, passWord, host, port);
-        mySqlRunner = new MySqlRunner(tableName, database, kafkaData, mySqlConnector);
-        mySqlRunner.putKafkaData(kafkaData);
+        mySqlRunner = new MySqlRunner(tableName, database, eventData, mySqlConnector);
+        mySqlRunner.putKafkaData(eventData);
         String expectedSql = "insert into TEST_DB.TEST_TABLE values(1, '2018-01-01', 'SERVICE_CODE', 'EVENT_CONTEXT');";
 
         assertEquals(expectedSql, mySqlRunner.getInsertQuery());
@@ -59,8 +60,8 @@ public class MySqlRunnerSpec extends TestCase {
 
     @Test
     public void mySqlRunnerInsertTest() {
-        mySqlConnector = mock(MySqlConnector.class);
-        mySqlRunner = new MySqlRunner(tableName, database, kafkaData, mySqlConnector);
+        mySqlConnector = mock(DbConnector.class);
+        mySqlRunner = new MySqlRunner(tableName, database, eventData, mySqlConnector);
         Statement statement = mock(Statement.class);
         String sql = mySqlRunner.getInsertQuery();
 

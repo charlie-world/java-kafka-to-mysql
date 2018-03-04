@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql.runner.kafka;
+package com.charlieworld.kafkatomysql.consumer.kafkaconsumer;
 
 import java.util.List;
 import java.util.concurrent.locks.Lock;

@@ -1,9 +1,9 @@
 package com.charlieworld.kafkatomysql.runner;
 
-import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
-import com.charlieworld.kafkatomysql.dto.runnerqueue.RunnerQueue;
+import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunner;
+import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.runnerqueue.MySqlRunnerQueue;
 import com.charlieworld.kafkatomysql.runner.intervaltime.IntervalTimeRunner;
-import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunner;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,7 +27,7 @@ public class IntervalTimeRunnerSpec extends TestCase {
     @Test
     public void IntervalTimeRunnerTest() {
 
-        RunnerQueue runnerQueue = mock(RunnerQueue.class);
+        MySqlRunnerQueue mySqlRunnerQueue = mock(MySqlRunnerQueue.class);
         KafkaConsumeRunner kafkaConsumeRunner = mock(KafkaConsumeRunner.class);
 
         /*
@@ -35,7 +35,7 @@ public class IntervalTimeRunnerSpec extends TestCase {
         *  when intervalTime expired hashMap reset
         * */
 
-        intervalTimeRunner = new IntervalTimeRunner(interval, runnerQueue, mutex, kafkaConsumeRunner);
+        intervalTimeRunner = new IntervalTimeRunner(interval, mySqlRunnerQueue, mutex, kafkaConsumeRunner);
         HashMap<String, KafkaData> newHashMap = new HashMap<String, KafkaData>();
 
         when(kafkaConsumeRunner.setHashMap(newHashMap)).thenReturn(newHashMap);
