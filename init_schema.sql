@@ -1,4 +1,4 @@
-use kafka;
+drop table if exists event;
 create table event (
   event_id INT NOT NULL,
   event_timestamp VARCHAR(255) NOT NULL,

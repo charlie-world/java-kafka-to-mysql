@@ -6,7 +6,7 @@ import org.apache.kafka.common.errors.InterruptException;
 
 import java.util.concurrent.ExecutorService;
 
-public class QueueManagingRunner extends Runner {
+public final class QueueManagingRunner extends Runner {
 
     private RunnerQueue mySqlRunnerQueue = null;
     private ExecutorService executorService = null;

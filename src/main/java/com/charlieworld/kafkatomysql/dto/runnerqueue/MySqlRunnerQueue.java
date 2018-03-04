@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class MySqlRunnerQueue extends RunnerQueue {
+public final class MySqlRunnerQueue extends RunnerQueue {
 
-    private Queue<Runner> MY_SQL_RUNNER_QUEUE = new LinkedList<Runner>();
+    private final Queue<Runner> MY_SQL_RUNNER_QUEUE = new LinkedList<Runner>();
     private String tableName = null;
     private String database = null;
     private DbConnector mySqlConnector = null;

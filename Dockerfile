@@ -8,4 +8,4 @@ COPY ./init_schema.sql /data/init_schema.sql
 # Change the working directory
 WORKDIR data
 
-CMD mysql -u $MYSQL_USER -p $MYSQL_PASSWORD $MYSQL_DATABASE < init_schema.sql
+CMD mysql -u root -p $MYSQL_PASSWORD $MYSQL_DATABASE < init_schema.sql

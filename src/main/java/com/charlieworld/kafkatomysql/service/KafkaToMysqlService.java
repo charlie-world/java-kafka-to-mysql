@@ -4,11 +4,11 @@ import com.charlieworld.kafkatomysql.DbConnector;
 import com.charlieworld.kafkatomysql.Runner;
 import com.charlieworld.kafkatomysql.Service;
 import com.charlieworld.kafkatomysql.consumer.ConsumerRunner;
-import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunnerBuilder;
+import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunner;
 import com.charlieworld.kafkatomysql.dbconnector.MySqlConnector;
 import com.charlieworld.kafkatomysql.dto.RunnerQueue;
 import com.charlieworld.kafkatomysql.dto.runnerqueue.MySqlRunnerQueue;
-import com.charlieworld.kafkatomysql.runner.intervaltime.IntervalTimeRunnerBuilder;
+import com.charlieworld.kafkatomysql.runner.intervaltime.IntervalTimeRunner;
 import com.charlieworld.kafkatomysql.runner.managequeue.QueueManagingRunner;
 
 import java.io.File;
@@ -25,9 +25,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class KafkaToMysqlService implements Service {
+public final class KafkaToMysqlService implements Service {
 
-    private Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
     private String tableName = null;
     private String databse = null;
 
@@ -49,8 +49,16 @@ public class KafkaToMysqlService implements Service {
             this.kafkaConsumeRunner = initKafkaConsumeRunner(props);
             this.tableName = props.getProperty("db.table_name");
             this.databse = props.getProperty("db.database");
-            int threadPoolSize = Integer.valueOf(props.getProperty("threadPoolSize"));
-            this.executorService = Executors.newFixedThreadPool(threadPoolSize);
+
+            int threadPoolSize = 5;
+            try {
+                threadPoolSize = Integer.valueOf(props.getProperty("maxThreadPoolSize"));
+            } catch (NullPointerException e) {
+                // catch but nothing to do
+            } finally {
+                this.executorService = Executors.newFixedThreadPool(threadPoolSize);
+            }
+
             this.mySqlRunnerQueue = new MySqlRunnerQueue(
                     tableName,
                     databse,
@@ -67,12 +75,7 @@ public class KafkaToMysqlService implements Service {
     private Runner initIntervalTimeRunner(Properties props) {
         long interval = Long.valueOf(props.getProperty("interval_time"));
 
-        return new IntervalTimeRunnerBuilder()
-                .interval(interval)
-                .runnerQueue(mySqlRunnerQueue)
-                .kafKaConsumeRunner(kafkaConsumeRunner)
-                .mutex(mutex)
-                .build();
+        return new IntervalTimeRunner(interval, mySqlRunnerQueue, mutex, kafkaConsumeRunner);
     }
 
     private ConsumerRunner initKafkaConsumeRunner(Properties props) {
@@ -80,12 +83,7 @@ public class KafkaToMysqlService implements Service {
         String bootstrapServers = props.getProperty("consumer.bootstrap_servers");
         String groupId = props.getProperty("consumer.group_id");
 
-        return new KafkaConsumeRunnerBuilder()
-                .topics(topics)
-                .bootstrapServers(bootstrapServers)
-                .groupId(groupId)
-                .mutex(mutex)
-                .build();
+        return new KafkaConsumeRunner(topics, bootstrapServers, groupId, mutex);
     }
 
     private DbConnector initMySqlConnector(Properties props) {
