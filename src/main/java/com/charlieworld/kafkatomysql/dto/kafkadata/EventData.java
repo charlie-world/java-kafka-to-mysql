@@ -18,13 +18,11 @@ public final class EventData extends KafkaData {
     private String eventContext;
 
     public EventData(long eventId, String eventTimestamp, String serviceCode, String eventContext) {
-        if (eventId > 0 && eventTimestamp != null) {
+        if (eventTimestamp != null) {
             this.eventId = eventId;
             this.eventTimestamp = eventTimestamp;
             this.serviceCode = serviceCode;
             this.eventContext = eventContext;
-        } else if (eventId <= 0) {
-            throw new IllegalArgumentException(String.format("event id (%d) must be positive number", eventId));
         } else {
             throw new IllegalArgumentException("event timestamp required");
         }

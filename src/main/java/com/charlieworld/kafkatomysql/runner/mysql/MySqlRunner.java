@@ -23,15 +23,31 @@ public final class MySqlRunner extends Runner {
     }
 
     public String getInsertQuery() {
-        return String.format(
-                "insert into %s.%s values(%d, '%s', '%s', '%s');",
+        String prefix = String.format(
+                "insert into %s.%s values(%d, '%s'",
                 this.database,
                 this.tableName,
                 this.eventData.getEventId(),
-                this.eventData.getEventTimestamp(),
-                this.eventData.getServiceCode(),
-                this.eventData.getEventContext()
+                this.eventData.getEventTimestamp()
         );
+
+        String suffix;
+
+        if (this.eventData.getServiceCode() == null) {
+            if (this.eventData.getEventContext() == null) {
+                suffix = ", NULL, NULL);";
+            } else {
+                suffix = String.format(", NULL, '%s');", this.eventData.getEventContext());
+            }
+        } else {
+            if (this.eventData.getEventContext() == null) {
+                suffix = String.format(", '%s', NULL);", this.eventData.getServiceCode());
+            } else {
+                suffix = String.format(", '%s', '%s');", this.eventData.getServiceCode(), this.eventData.getEventContext());
+            }
+        }
+
+        return prefix + suffix;
     }
 
     public void putKafkaData(EventData eventData) {
