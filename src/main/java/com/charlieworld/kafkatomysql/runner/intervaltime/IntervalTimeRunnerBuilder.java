@@ -1,8 +1,8 @@
 package com.charlieworld.kafkatomysql.runner.intervaltime;
 
-import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
-import com.charlieworld.kafkatomysql.dto.runnerqueue.RunnerQueue;
-import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunner;
+import com.charlieworld.kafkatomysql.consumer.ConsumerRunner;
+import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.RunnerQueue;
 
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
@@ -10,10 +10,10 @@ import java.util.concurrent.locks.Lock;
 public class IntervalTimeRunnerBuilder {
 
     private long interval = 10;
-    private RunnerQueue runnerQueue = null;
+    private RunnerQueue mySqlRunnerQueue = null;
     private Lock mutex = null;
     private HashMap<String, KafkaData> hashMap = null;
-    private KafkaConsumeRunner kafkaConsumeRunner = null;
+    private ConsumerRunner kafkaConsumeRunner = null;
 
     public IntervalTimeRunnerBuilder() {}
 
@@ -22,11 +22,11 @@ public class IntervalTimeRunnerBuilder {
         return this;
     }
 
-    public IntervalTimeRunnerBuilder runnerQueue(RunnerQueue runnerQueue) {
-        if (runnerQueue == null) {
+    public IntervalTimeRunnerBuilder runnerQueue(RunnerQueue mySqlRunnerQueue) {
+        if (mySqlRunnerQueue == null) {
             throw new IllegalArgumentException("Runner Queue must be existed");
         } else {
-            this.runnerQueue = runnerQueue;
+            this.mySqlRunnerQueue = mySqlRunnerQueue;
         }
 
         return this;
@@ -52,7 +52,7 @@ public class IntervalTimeRunnerBuilder {
         return this;
     }
 
-    public IntervalTimeRunnerBuilder kafKaConsumeRunner(KafkaConsumeRunner kafkaConsumeRunner) {
+    public IntervalTimeRunnerBuilder kafKaConsumeRunner(ConsumerRunner kafkaConsumeRunner) {
         if (kafkaConsumeRunner == null) {
             throw new IllegalArgumentException("kafkaConsumeRunner value must be existed");
         } else {
@@ -63,6 +63,6 @@ public class IntervalTimeRunnerBuilder {
     }
 
     public IntervalTimeRunner build() {
-        return new IntervalTimeRunner(this.interval, this.runnerQueue, this.mutex, this.kafkaConsumeRunner);
+        return new IntervalTimeRunner(this.interval, this.mySqlRunnerQueue, this.mutex, this.kafkaConsumeRunner);
     }
 }

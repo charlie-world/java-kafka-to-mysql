@@ -1,6 +1,7 @@
 package com.charlieworld.kafkatomysql.dto.kafkadata;
 
-import com.charlieworld.kafkatomysql.runner.mysql.MySqlConnector;
+import com.charlieworld.kafkatomysql.DbConnector;
+import com.charlieworld.kafkatomysql.dto.KafkaData;
 import com.charlieworld.kafkatomysql.runner.mysql.MySqlRunner;
 
 import java.util.NoSuchElementException;
@@ -9,14 +10,14 @@ import java.util.NoSuchElementException;
  * Writer Charlie Lee
  * Created at 2018. 2. 28.
  */
-public class KafkaData {
+public class EventData extends KafkaData {
 
     private long eventId;
     private String eventTimestamp;
     private String serviceCode;
     private String eventContext;
 
-    public KafkaData(long eventId, String eventTimestamp, String serviceCode, String eventContext) {
+    public EventData(long eventId, String eventTimestamp, String serviceCode, String eventContext) {
         if (eventId > 0 && eventTimestamp != null) {
             this.eventId = eventId;
             this.eventTimestamp = eventTimestamp;
@@ -49,7 +50,7 @@ public class KafkaData {
         return this.eventContext;
     }
 
-    public MySqlRunner mapToMySqlRunner(String tableName, String database, MySqlConnector mySqlConnector) {
+    public MySqlRunner mapToRunner(String tableName, String database, DbConnector mySqlConnector) {
         return new MySqlRunner(tableName, database,this, mySqlConnector);
     }
 }

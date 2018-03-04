@@ -1,8 +1,9 @@
 package com.charlieworld.kafkatomysql.runner;
 
-import com.charlieworld.kafkatomysql.dto.kafkadata.KafkaData;
-import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunner;
-import com.charlieworld.kafkatomysql.runner.kafka.KafkaConsumeRunnerBuilder;
+import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunner;
+import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunnerBuilder;
+import com.charlieworld.kafkatomysql.dto.KafkaData;
+import com.charlieworld.kafkatomysql.dto.kafkadata.EventData;
 import junit.framework.TestCase;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.Before;
@@ -10,7 +11,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -25,7 +29,7 @@ public class KafkaConsumeRunnerSpec extends TestCase {
     String bootstrapServers = null;
     String groupId = null;
     KafkaConsumeRunner kafkaConsumeRunner = null;
-    KafkaData kafkaData = null;
+    EventData eventData = null;
 
     long eventId = 1;
     String timestamp = "2018-01-01";
@@ -45,7 +49,7 @@ public class KafkaConsumeRunnerSpec extends TestCase {
                                 .groupId(groupId)
                                 .mutex(mutex)
                                 .build();
-        kafkaData = new KafkaData(eventId, timestamp, serviceCode, eventContext);
+        eventData = new EventData(eventId, timestamp, serviceCode, eventContext);
     }
 
     @Test
@@ -67,28 +71,28 @@ public class KafkaConsumeRunnerSpec extends TestCase {
         String fullBody = "{event_id: 1, event_timestamp: '2018-01-01', service_code: 'SERVICE_CODE', event_context: 'EVENT_CONTEXT'}";
         String bodyWithNull = "{event_id: 1, event_timestamp: '2018-01-01', service_code: 'SERVICE_CODE'}";
 
-        KafkaData expectedFull = kafkaConsumeRunner.parseKafkaBody(fullBody);
-        KafkaData expectedWithNull = kafkaConsumeRunner.parseKafkaBody(bodyWithNull);
+        EventData expectedFull = kafkaConsumeRunner.parseKafkaBody(fullBody);
+        EventData expectedWithNull = kafkaConsumeRunner.parseKafkaBody(bodyWithNull);
 
-        assertEquals(kafkaData.getEventId(), expectedFull.getEventId());
-        assertEquals(kafkaData.getEventTimestamp(), expectedFull.getEventTimestamp());
-        assertEquals(kafkaData.getServiceCode(), expectedFull.getServiceCode());
-        assertEquals(kafkaData.getEventContext(), expectedFull.getEventContext());
+        assertEquals(eventData.getEventId(), expectedFull.getEventId());
+        assertEquals(eventData.getEventTimestamp(), expectedFull.getEventTimestamp());
+        assertEquals(eventData.getServiceCode(), expectedFull.getServiceCode());
+        assertEquals(eventData.getEventContext(), expectedFull.getEventContext());
 
-        assertEquals(kafkaData.getEventId(), expectedWithNull.getEventId());
-        assertEquals(kafkaData.getEventTimestamp(), expectedWithNull.getEventTimestamp());
-        assertEquals(kafkaData.getServiceCode(), expectedWithNull.getServiceCode());
+        assertEquals(eventData.getEventId(), expectedWithNull.getEventId());
+        assertEquals(eventData.getEventTimestamp(), expectedWithNull.getEventTimestamp());
+        assertEquals(eventData.getServiceCode(), expectedWithNull.getServiceCode());
         assertEquals(null, expectedWithNull.getEventContext());
     }
 
     @Test
     public void KafkaSubscriberPutHashMapTest() {
-        KafkaData otherKafkaData = new KafkaData(eventId, timestamp, null, null);
-        kafkaConsumeRunner.putKafkaDataToHashMap(kafkaData);
-        assertEquals(kafkaData, kafkaConsumeRunner.getHashMap().get(String.valueOf(kafkaData.getEventId())));
+        EventData otherEventData = new EventData(eventId, timestamp, null, null);
+        kafkaConsumeRunner.putKafkaDataToHashMap(eventData);
+        assertEquals(eventData, kafkaConsumeRunner.getHashMap().get(String.valueOf(eventData.getEventId())));
 
         // update based on event id
-        kafkaConsumeRunner.putKafkaDataToHashMap(otherKafkaData);
-        assertEquals(otherKafkaData, kafkaConsumeRunner.getHashMap().get(String.valueOf(kafkaData.getEventId())));
+        kafkaConsumeRunner.putKafkaDataToHashMap(otherEventData);
+        assertEquals(otherEventData, kafkaConsumeRunner.getHashMap().get(String.valueOf(eventData.getEventId())));
     }
 }
