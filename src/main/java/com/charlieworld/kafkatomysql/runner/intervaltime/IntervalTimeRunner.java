@@ -58,7 +58,7 @@ public class IntervalTimeRunner extends Runner {
                 Collection<KafkaData> collection = resetHashMap(new HashMap<String, KafkaData>());
                 mySqlRunnerQueue.enqueue(collection);
             } catch (InterruptedException ie) {
-                System.exit(1);
+                this.close();
             }
         }
     }
