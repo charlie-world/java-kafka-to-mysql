@@ -12,7 +12,7 @@ import java.sql.Statement;
  * Writer Charlie Lee
  * Created at 2018. 3. 2.
  */
-public class MySqlConnector extends DbConnector {
+public final class MySqlConnector extends DbConnector {
 
     private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private String userName;

@@ -8,7 +8,7 @@ import com.charlieworld.kafkatomysql.dto.kafkadata.EventData;
  * Writer Charlie Lee
  * Created at 2018. 2. 27.
  */
-public class MySqlRunner extends Runner {
+public final class MySqlRunner extends Runner {
 
     private String tableName;
     private String database;

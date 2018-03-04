@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class KafkaToMysqlService implements Service {
+public final class KafkaToMysqlService implements Service {
 
     private final Logger logger = Logger.getLogger(getClass().getName());
     private String tableName = null;
@@ -49,8 +49,16 @@ public class KafkaToMysqlService implements Service {
             this.kafkaConsumeRunner = initKafkaConsumeRunner(props);
             this.tableName = props.getProperty("db.table_name");
             this.databse = props.getProperty("db.database");
-            int threadPoolSize = Integer.valueOf(props.getProperty("threadPoolSize"));
-            this.executorService = Executors.newFixedThreadPool(threadPoolSize);
+
+            int threadPoolSize = 5;
+            try {
+                threadPoolSize = Integer.valueOf(props.getProperty("maxThreadPoolSize"));
+            } catch (NullPointerException e) {
+                // catch but nothing to do
+            } finally {
+                this.executorService = Executors.newFixedThreadPool(threadPoolSize);
+            }
+
             this.mySqlRunnerQueue = new MySqlRunnerQueue(
                     tableName,
                     databse,

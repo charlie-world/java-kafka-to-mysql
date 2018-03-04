@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.concurrent.locks.Lock;
 
-public class IntervalTimeRunner extends Runner {
+public final class IntervalTimeRunner extends Runner {
 
     private long interval = 10;
     private RunnerQueue mySqlRunnerQueue = null;

@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * Writer Charlie Lee
  * Created at 2018. 2. 28.
  */
-public class EventData extends KafkaData {
+public final class EventData extends KafkaData {
 
     private long eventId;
     private String eventTimestamp;
