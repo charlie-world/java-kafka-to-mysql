@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql.runner;
+package com.charlieworld.kafkatomysql.dbconnector;
 
 import com.charlieworld.kafkatomysql.DbConnector;
 import com.charlieworld.kafkatomysql.dbconnector.MySqlConnector;
@@ -31,6 +31,7 @@ public class MySqlConnectorSpec extends TestCase {
     @Test
     public void MySqlConnectorTest() {
         DbConnector mySqlConnector = new MySqlConnector(userName, passWord, host, port);
+
         String newHost = "NEW_HOST";
         int newPort = 3307;
         assertEquals(host, mySqlConnector.getHost());
