@@ -8,15 +8,17 @@
 
 Example of `config.properties`
 ```
-username=user
-password=password
-table_name=event
-database=kafka
-host=localhost
-port=3306
-group_id=1
-bootstrap_servers=localhost:9092
-topics=test
+db.username=user
+db.password=password
+db.table_name=event
+db.database=kafka
+db.host=localhost
+db.port=3306
+
+consumer.group_id=1
+consumer.bootstrap_servers=localhost:9092
+consumer.topics=test
+
 interval_time=1
 ```
 

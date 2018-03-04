@@ -6,7 +6,7 @@ import org.apache.kafka.common.errors.InterruptException;
 
 import java.util.concurrent.ExecutorService;
 
-public class QueueManagingRunner implements Runnable {
+public class QueueManagingRunner extends Runner {
 
     private RunnerQueue mySqlRunnerQueue = null;
     private ExecutorService executorService = null;
@@ -30,6 +30,7 @@ public class QueueManagingRunner implements Runnable {
                 }
             } catch (InterruptException ie) {
                 ie.printStackTrace();
+                this.close();
             }
         }
     }

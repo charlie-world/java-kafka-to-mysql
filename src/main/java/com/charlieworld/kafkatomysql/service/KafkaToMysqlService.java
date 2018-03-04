@@ -47,8 +47,8 @@ public class KafkaToMysqlService implements Service {
             props.load(input);
             this.mySqlConnector = initMySqlConnector(props);
             this.kafkaConsumeRunner = initKafkaConsumeRunner(props);
-            this.tableName = props.getProperty("table_name");
-            this.databse = props.getProperty("database");
+            this.tableName = props.getProperty("db.table_name");
+            this.databse = props.getProperty("db.database");
             this.mySqlRunnerQueue = new MySqlRunnerQueue(
                     tableName,
                     databse,
@@ -74,9 +74,9 @@ public class KafkaToMysqlService implements Service {
     }
 
     private ConsumerRunner initKafkaConsumeRunner(Properties props) {
-        List<String> topics = Arrays.asList(props.getProperty("topics").trim().split(","));
-        String bootstrapServers = props.getProperty("bootstrap_servers");
-        String groupId = props.getProperty("group_id");
+        List<String> topics = Arrays.asList(props.getProperty("consumer.topics").trim().split(","));
+        String bootstrapServers = props.getProperty("consumer.bootstrap_servers");
+        String groupId = props.getProperty("consumer.group_id");
 
         return new KafkaConsumeRunnerBuilder()
                 .topics(topics)
@@ -87,10 +87,10 @@ public class KafkaToMysqlService implements Service {
     }
 
     private DbConnector initMySqlConnector(Properties props) {
-        String username = props.getProperty("username");
-        String password = props.getProperty("password");
-        String host = props.getProperty("host");
-        int port = Integer.valueOf(props.getProperty("port"));
+        String username = props.getProperty("db.username");
+        String password = props.getProperty("db.password");
+        String host = props.getProperty("db.host");
+        int port = Integer.valueOf(props.getProperty("db.port"));
         return new MySqlConnector(username, password, host, port);
     }
 

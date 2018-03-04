@@ -87,7 +87,6 @@ public class KafkaConsumeRunner extends ConsumerRunner {
                 eventContext = jsonObject.getString("event_context");
             } catch (JSONException je) {
                 // nothing
-                je.printStackTrace();
             }
 
             eventData = new EventData(eventId, eventTimestamp, serviceCode, eventContext);
