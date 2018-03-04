@@ -63,7 +63,7 @@ public class KafkaToMysqlService implements Service {
         }
     }
 
-    private IntervalTimeRunner initIntervalTimeRunner(Properties props) {
+    private Runner initIntervalTimeRunner(Properties props) {
         long interval = Long.valueOf(props.getProperty("interval_time"));
 
         return new IntervalTimeRunnerBuilder()
@@ -95,7 +95,7 @@ public class KafkaToMysqlService implements Service {
         return new MySqlConnector(username, password, host, port);
     }
 
-    public KafkaToMysqlService start() {
+    public Service start() {
         executorService.execute(kafkaConsumeRunner);
         executorService.execute(intervalTimeRunner);
         executorService.execute(new ManageQueueRunner(mySqlRunnerQueue, executorService));
