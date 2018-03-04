@@ -1,5 +1,7 @@
 FROM mysql/mysql-server:5.7
 
+MAINTAINER Charlie Lee version: latest
+
 # Copy the database schema to the /data directory
 COPY ./init_schema.sql /data/init_schema.sql
 
