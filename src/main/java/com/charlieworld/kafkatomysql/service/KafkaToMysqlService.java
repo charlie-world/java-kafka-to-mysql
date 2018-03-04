@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 public class KafkaToMysqlService implements Service {
 
-    private Logger logger = Logger.getLogger(getClass().getName());
+    private final Logger logger = Logger.getLogger(getClass().getName());
     private String tableName = null;
     private String databse = null;
 
