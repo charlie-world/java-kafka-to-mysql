@@ -23,9 +23,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class KafkaToMysqlService implements Service {
 
+    private Logger logger = Logger.getLogger(getClass().getName());
     private String tableName = null;
     private String databse = null;
 
@@ -96,11 +99,12 @@ public class KafkaToMysqlService implements Service {
         executorService.execute(kafkaConsumeRunner);
         executorService.execute(intervalTimeRunner);
         executorService.execute(new ManageQueueRunner(mySqlRunnerQueue, executorService));
-        System.out.println("Start Main Service...");
+        logger.log(Level.INFO, "Start Service...");
         return this;
     }
 
     public void shutdown() {
         executorService.shutdown();
+        logger.log(Level.INFO, "Shutdown Service...");
     }
 }
