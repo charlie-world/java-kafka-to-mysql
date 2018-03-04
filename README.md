@@ -4,7 +4,7 @@
 
 ### Step 1: Environment
 
-####Properties file must be exist
+**Properties file must be exist**
 
 Example of `config.properties`
 ```
