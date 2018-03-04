@@ -1,7 +1,6 @@
 package com.charlieworld.kafkatomysql.runner;
 
 import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunner;
-import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunnerBuilder;
 import com.charlieworld.kafkatomysql.dto.KafkaData;
 import com.charlieworld.kafkatomysql.dto.kafkadata.EventData;
 import junit.framework.TestCase;
@@ -43,12 +42,7 @@ public class KafkaConsumeRunnerSpec extends TestCase {
         topics = Arrays.asList("test-topic");
         bootstrapServers = "localhost:9035";
         groupId = "test-group-id";
-        kafkaConsumeRunner = new KafkaConsumeRunnerBuilder()
-                                .topics(topics)
-                                .bootstrapServers(bootstrapServers)
-                                .groupId(groupId)
-                                .mutex(mutex)
-                                .build();
+        kafkaConsumeRunner = new KafkaConsumeRunner(topics, bootstrapServers, groupId, mutex);
         eventData = new EventData(eventId, timestamp, serviceCode, eventContext);
     }
 

@@ -1,7 +1,6 @@
 package com.charlieworld.kafkatomysql.dto;
 
 import com.charlieworld.kafkatomysql.dto.kafkadata.EventData;
-import com.charlieworld.kafkatomysql.dto.kafkadata.EventDataBuilder;
 import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,13 +18,7 @@ public class EventDataSpec extends TestCase {
         String timestamp = "2018-02-28T00:00:00.000Z";
         String serviceCode = "SERVICE_CODE";
         String eventContext = "EVENT_CONTEXT";
-
-        EventData eventData = new EventDataBuilder()
-                                    .eventId(eventId)
-                                    .eventTimestamp(timestamp)
-                                    .serviceCode(serviceCode)
-                                    .eventContext(eventContext)
-                                    .build();
+        EventData eventData = new EventData(eventId, timestamp, serviceCode, eventContext);
 
         assertEquals(eventData.getEventId(), eventId);
         assertEquals(eventData.getEventTimestamp(), timestamp);

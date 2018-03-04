@@ -2,7 +2,7 @@ package com.charlieworld.kafkatomysql;
 
 public interface Service {
 
-    public Service start();
+    Service start();
 
-    public void shutdown();
+    void shutdown();
 }

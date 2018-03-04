@@ -4,11 +4,11 @@ import com.charlieworld.kafkatomysql.DbConnector;
 import com.charlieworld.kafkatomysql.Runner;
 import com.charlieworld.kafkatomysql.Service;
 import com.charlieworld.kafkatomysql.consumer.ConsumerRunner;
-import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunnerBuilder;
+import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunner;
 import com.charlieworld.kafkatomysql.dbconnector.MySqlConnector;
 import com.charlieworld.kafkatomysql.dto.RunnerQueue;
 import com.charlieworld.kafkatomysql.dto.runnerqueue.MySqlRunnerQueue;
-import com.charlieworld.kafkatomysql.runner.intervaltime.IntervalTimeRunnerBuilder;
+import com.charlieworld.kafkatomysql.runner.intervaltime.IntervalTimeRunner;
 import com.charlieworld.kafkatomysql.runner.managequeue.QueueManagingRunner;
 
 import java.io.File;
@@ -67,12 +67,7 @@ public class KafkaToMysqlService implements Service {
     private Runner initIntervalTimeRunner(Properties props) {
         long interval = Long.valueOf(props.getProperty("interval_time"));
 
-        return new IntervalTimeRunnerBuilder()
-                .interval(interval)
-                .runnerQueue(mySqlRunnerQueue)
-                .kafKaConsumeRunner(kafkaConsumeRunner)
-                .mutex(mutex)
-                .build();
+        return new IntervalTimeRunner(interval, mySqlRunnerQueue, mutex, kafkaConsumeRunner);
     }
 
     private ConsumerRunner initKafkaConsumeRunner(Properties props) {
@@ -80,12 +75,7 @@ public class KafkaToMysqlService implements Service {
         String bootstrapServers = props.getProperty("consumer.bootstrap_servers");
         String groupId = props.getProperty("consumer.group_id");
 
-        return new KafkaConsumeRunnerBuilder()
-                .topics(topics)
-                .bootstrapServers(bootstrapServers)
-                .groupId(groupId)
-                .mutex(mutex)
-                .build();
+        return new KafkaConsumeRunner(topics, bootstrapServers, groupId, mutex);
     }
 
     private DbConnector initMySqlConnector(Properties props) {
