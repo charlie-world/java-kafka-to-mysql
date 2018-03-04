@@ -36,6 +36,8 @@ public class KafkaToMysql {
 }
 ```
 
+### Example
+
 #### You can run the simple Integration test
 
 `docker-compose up` must be started before run Integration test
