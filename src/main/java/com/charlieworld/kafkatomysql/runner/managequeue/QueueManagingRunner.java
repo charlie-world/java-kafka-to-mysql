@@ -6,12 +6,12 @@ import org.apache.kafka.common.errors.InterruptException;
 
 import java.util.concurrent.ExecutorService;
 
-public class ManageQueueRunner implements Runnable {
+public class QueueManagingRunner implements Runnable {
 
     private RunnerQueue mySqlRunnerQueue = null;
     private ExecutorService executorService = null;
 
-    public ManageQueueRunner(RunnerQueue mySqlRunnerQueue, ExecutorService executorService) {
+    public QueueManagingRunner(RunnerQueue mySqlRunnerQueue, ExecutorService executorService) {
         if (mySqlRunnerQueue == null) {
             throw new IllegalArgumentException("Runner Queue must not be null value");
         } else if (executorService == null) {

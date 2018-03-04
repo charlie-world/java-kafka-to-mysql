@@ -8,9 +8,8 @@ import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunnerBu
 import com.charlieworld.kafkatomysql.dbconnector.MySqlConnector;
 import com.charlieworld.kafkatomysql.dto.RunnerQueue;
 import com.charlieworld.kafkatomysql.dto.runnerqueue.MySqlRunnerQueue;
-import com.charlieworld.kafkatomysql.runner.intervaltime.IntervalTimeRunner;
 import com.charlieworld.kafkatomysql.runner.intervaltime.IntervalTimeRunnerBuilder;
-import com.charlieworld.kafkatomysql.runner.managequeue.ManageQueueRunner;
+import com.charlieworld.kafkatomysql.runner.managequeue.QueueManagingRunner;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -98,7 +97,7 @@ public class KafkaToMysqlService implements Service {
     public Service start() {
         executorService.execute(kafkaConsumeRunner);
         executorService.execute(intervalTimeRunner);
-        executorService.execute(new ManageQueueRunner(mySqlRunnerQueue, executorService));
+        executorService.execute(new QueueManagingRunner(mySqlRunnerQueue, executorService));
         logger.log(Level.INFO, "Start Service...");
         return this;
     }
