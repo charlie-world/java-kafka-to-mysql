@@ -35,9 +35,9 @@ public class KafkaToMysqlService implements Service {
     private ConsumerRunner kafkaConsumeRunner = null;
     private Runner intervalTimeRunner = null;
     private RunnerQueue mySqlRunnerQueue = null;
+    private ExecutorService executorService = null;
 
     private final Lock mutex = new ReentrantLock(true);
-    private static final ExecutorService executorService = Executors.newCachedThreadPool();
 
     public KafkaToMysqlService(String PROPERTIES_PATH) {
         try {
@@ -49,6 +49,8 @@ public class KafkaToMysqlService implements Service {
             this.kafkaConsumeRunner = initKafkaConsumeRunner(props);
             this.tableName = props.getProperty("db.table_name");
             this.databse = props.getProperty("db.database");
+            int threadPoolSize = Integer.valueOf(props.getProperty("threadPoolSize"));
+            this.executorService = Executors.newFixedThreadPool(threadPoolSize);
             this.mySqlRunnerQueue = new MySqlRunnerQueue(
                     tableName,
                     databse,
