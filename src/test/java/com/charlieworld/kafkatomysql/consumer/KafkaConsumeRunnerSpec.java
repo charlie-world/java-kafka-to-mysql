@@ -1,4 +1,4 @@
-package com.charlieworld.kafkatomysql.runner;
+package com.charlieworld.kafkatomysql.consumer;
 
 import com.charlieworld.kafkatomysql.consumer.kafkaconsumer.KafkaConsumeRunner;
 import com.charlieworld.kafkatomysql.dto.KafkaData;

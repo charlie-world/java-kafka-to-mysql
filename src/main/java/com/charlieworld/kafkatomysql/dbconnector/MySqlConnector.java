@@ -1,6 +1,7 @@
 package com.charlieworld.kafkatomysql.dbconnector;
 
 import com.charlieworld.kafkatomysql.DbConnector;
+import com.charlieworld.kafkatomysql.runner.mysql.MySqlRunner;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
