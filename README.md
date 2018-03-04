@@ -20,6 +20,7 @@ consumer.bootstrap_servers=localhost:9092
 consumer.topics=test
 
 interval_time=1
+threadPoolSize=8
 ```
 
 (Everything in this example, are required)
