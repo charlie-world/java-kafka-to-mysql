@@ -29,7 +29,7 @@ interval_time=1
 ```
 public class KafkaToMysql {
     public static void main(String[] args) {
-        String PROPERTIES_PATH = ClassLoader.class.getResource("/config.properties").getPath();
+        String PROPERTIES_PATH = "PATH_CONFIG_PROPERTIES_FILE_IN";
         Service service = new KafkaToMysqlService(PROPERTIES_PATH);
         service.start();
     }
