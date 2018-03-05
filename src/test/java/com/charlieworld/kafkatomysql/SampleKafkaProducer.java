@@ -5,6 +5,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.sql.Date;
 import java.util.Properties;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 public class SampleKafkaProducer extends Thread {
@@ -37,8 +38,9 @@ public class SampleKafkaProducer extends Thread {
     }
 
     public void run() {
-        int msgId = 1;
-        while(true) {
+        Random random = new Random();
+        int msgId = random.nextInt();
+        while(!Thread.interrupted()) {
             try {
                 Thread.sleep(1000);
                 kafkaProducer.send(new ProducerRecord<Integer, String>(topic,
@@ -49,7 +51,7 @@ public class SampleKafkaProducer extends Thread {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            msgId += 1;
+            msgId = random.nextInt();
         }
     }
 }

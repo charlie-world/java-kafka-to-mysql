@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.locks.Lock;
 
-public final class KafkaConsumeRunner extends ConsumerRunner {
+public class KafkaConsumeRunner extends ConsumerRunner {
 
     private List<String> topics;
     private String bootstrapServers;
