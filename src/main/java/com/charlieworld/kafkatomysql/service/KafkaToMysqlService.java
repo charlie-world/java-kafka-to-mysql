@@ -52,7 +52,10 @@ public final class KafkaToMysqlService implements Service {
 
             int threadPoolSize = 5;
             try {
-                threadPoolSize = Integer.valueOf(props.getProperty("maxThreadPoolSize"));
+                int poolSize = Integer.valueOf(props.getProperty("maxThreadPoolSize"));
+                if (poolSize > 5) {
+                    threadPoolSize = poolSize;
+                }
             } catch (NullPointerException e) {
                 // catch but nothing to do
             } finally {
@@ -73,7 +76,7 @@ public final class KafkaToMysqlService implements Service {
     }
 
     private Runner initIntervalTimeRunner(Properties props) {
-        long interval = Long.valueOf(props.getProperty("interval_time"));
+        long interval = Long.valueOf(props.getProperty("interval.min"));
 
         return new IntervalTimeRunner(interval, mySqlRunnerQueue, mutex, kafkaConsumeRunner);
     }

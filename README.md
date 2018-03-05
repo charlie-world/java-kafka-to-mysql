@@ -1,5 +1,8 @@
 # java-kafka-to-mysql
 
+## Architecture
+![architecture 001](https://user-images.githubusercontent.com/34784000/36954838-f609f714-2067-11e8-83db-045a5096bc17.jpeg)
+
 ## How to use
 
 ### Step 1: Environment
@@ -19,8 +22,9 @@ consumer.group_id=1
 consumer.bootstrap_servers=localhost:9092
 consumer.topics=test
 
-interval_time=1
-maxThreadPoolSize=10   // not required
+interval.min=1         // interval time is 1 minutes
+
+maxThreadPoolSize=10   // This value is not always required
 ```
 
 
